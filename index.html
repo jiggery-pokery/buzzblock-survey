@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>BuzzBlock Site Survey</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BuzzBlock">
+<meta name="theme-color" content="#1C4E4C">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="manifest" href="./manifest.json">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#E9EDEB;
+    --surface:#FFFFFF;
+    --surface-2:#F3F5F3;
+    --border:#D5DBD8;
+    --ink:#1E2A2A;
+    --ink-soft:#5C6B69;
+    --teal:#2B6E6B;
+    --teal-dark:#1C4E4C;
+    --teal-tint:#DEEBEA;
+    --rust:#B5502F;
+    --rust-tint:#F6E4DD;
+    --amber:#C98A2C;
+    --radius:12px;
+    --display:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+    --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono',Menlo,'Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  #app{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--surface-2);
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 0 40px rgba(0,0,0,0.06);
+  }
+  .header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background-color:var(--teal-dark);
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 7px),
+      repeating-linear-gradient(-45deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 1px, transparent 1px, transparent 7px);
+    color:#fff;
+    padding:14px 18px 12px;
+  }
+  .header-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .brand{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:0.01em;
+    text-transform:uppercase;
+    line-height:1.05;
+  }
+  .brand small{display:block;font-family:var(--body);font-weight:400;text-transform:none;font-size:11px;color:rgba(255,255,255,0.75);letter-spacing:0;margin-top:3px;}
+  .reset-btn{
+    background:rgba(255,255,255,0.12);
+    border:1px solid rgba(255,255,255,0.3);
+    color:#fff;
+    font-size:11px;
+    font-family:var(--body);
+    padding:6px 10px;
+    border-radius:20px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .steps{display:flex;gap:6px;margin-top:12px;}
+  .step-pill{
+    flex:1;
+    text-align:center;
+    font-family:var(--display);
+    font-size:11px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:6px 2px;
+    border-radius:8px;
+    background:rgba(255,255,255,0.10);
+    color:rgba(255,255,255,0.65);
+    border:1px solid transparent;
+  }
+  .step-pill.active{background:rgba(255,255,255,0.95);color:var(--teal-dark);font-weight:700;}
+  .step-pill.done{color:#fff;border-color:rgba(255,255,255,0.4);}
+
+  .content{flex:1;padding:16px 16px 100px;}
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .section-title{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:20px;
+    letter-spacing:0.01em;
+    margin:0 0 4px;
+    color:var(--ink);
+  }
+  .section-sub{font-size:13px;color:var(--ink-soft);margin:0 0 16px;}
+  label{
+    display:block;
+    font-family:var(--display);
+    font-size:12px;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:5px;
+    margin-top:14px;
+  }
+  label:first-of-type{margin-top:0;}
+  input[type=text],input[type=tel],input[type=date],input[type=email],input[type=number],select,textarea{
+    width:100%;
+    font-family:var(--body);
+    font-size:15px;
+    padding:11px 12px;
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    background:var(--surface-2);
+    color:var(--ink);
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  select{
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%235C6B69'><path d='M5.5 7.5l4.5 4.5 4.5-4.5' stroke='%235C6B69' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    padding-right:34px;
+  }
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal);}
+  textarea{resize:vertical;min-height:60px;font-family:var(--body);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  .btn{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:15px;
+    letter-spacing:0.02em;
+    text-transform:uppercase;
+    border-radius:9px;
+    padding:13px 18px;
+    border:none;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+  }
+  .btn-primary{background:var(--teal);color:#fff;width:100%;}
+  .btn-primary:active{background:var(--teal-dark);}
+  .btn-primary:disabled{background:#B7C4C2;cursor:not-allowed;}
+  .btn-outline{background:transparent;color:var(--teal-dark);border:1.5px solid var(--teal);}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1.5px solid var(--border);}
+  .btn-danger{background:transparent;color:var(--rust);border:1.5px solid var(--rust);}
+  .btn-sm{font-size:12px;padding:8px 12px;border-radius:8px;}
+  .btn-block{width:100%;}
+
+  .bottom-bar{
+    position:sticky;bottom:0;left:0;right:0;
+    background:linear-gradient(to top, var(--surface-2) 70%, rgba(243,245,243,0));
+    padding:14px 16px 18px;
+    display:flex;gap:10px;
+  }
+  .bottom-bar .btn{flex:1;}
+
+  .room-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;
+    margin-bottom:10px;
+  }
+  .room-top{display:flex;align-items:center;gap:12px;}
+  .room-icon{
+    width:42px;height:42px;border-radius:9px;background:var(--teal-tint);color:var(--teal-dark);
+    display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:16px;flex-shrink:0;
+  }
+  .room-main{flex:1;min-width:0;cursor:pointer;}
+  .room-name{font-family:var(--display);font-weight:700;font-size:17px;color:var(--ink);}
+  .room-meta{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .room-meta.warn{color:var(--rust);}
+  .room-actions{display:flex;gap:6px;flex-shrink:0;}
+  .icon-btn{
+    width:34px;height:34px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface-2);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink-soft);
+  }
+  .icon-btn.danger{color:var(--rust);border-color:var(--rust-tint);}
+  .room-notes-input{margin-top:10px;min-height:44px;font-size:13px;padding:9px 10px;}
+
+  .add-inline{display:flex;gap:8px;margin-top:4px;}
+  .add-inline input{flex:1;}
+
+  .window-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px;
+    margin-bottom:10px;
+    display:flex;
+    gap:12px;
+  }
+  .window-thumb{
+    width:64px;height:64px;border-radius:8px;object-fit:cover;background:var(--surface-2);border:1px solid var(--border);flex-shrink:0;display:block;
+  }
+  .window-thumb.placeholder{display:flex;align-items:center;justify-content:center;color:var(--ink-soft);}
+  .thumb-wrap{position:relative;flex-shrink:0;}
+  .thumb-count{position:absolute;bottom:2px;right:2px;background:rgba(28,78,76,0.88);color:#fff;font-size:9px;font-weight:600;padding:1px 5px;border-radius:10px;}
+  .window-main{flex:1;min-width:0;}
+  .window-dims{font-family:var(--mono);font-weight:600;font-size:15px;}
+  .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .tag{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--surface-2);border:1px solid var(--border);color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px;}
+  .swatch{width:9px;height:9px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,0.2);}
+  .window-notes{font-size:12px;color:var(--ink-soft);margin-top:6px;font-style:italic;}
+  .window-actions{display:flex;flex-direction:column;gap:6px;}
+
+  .toggle-row{display:flex;gap:8px;margin-top:2px;}
+  .toggle-btn{
+    flex:1;padding:12px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface-2);
+    font-family:var(--body);font-weight:600;font-size:13px;color:var(--ink);cursor:pointer;text-align:center;
+  }
+  .toggle-btn.selected{border-color:var(--teal);background:var(--teal-tint);color:var(--teal-dark);}
+  .colour-row{display:flex;gap:8px;margin-top:2px;}
+  .colour-btn{
+    flex:1;padding:12px 6px;border-radius:9px;border:1.5px solid var(--border);background:var(--surface-2);
+    display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-size:12px;color:var(--ink);
+  }
+  .colour-btn.selected{border-color:var(--teal);background:var(--teal-tint);}
+  .colour-dot{width:22px;height:22px;border-radius:50%;border:1px solid rgba(0,0,0,0.15);}
+
+  .photo-box{
+    border:1.5px dashed var(--border);
+    border-radius:9px;
+    padding:14px;
+    text-align:center;
+    background:var(--surface-2);
+  }
+  .photo-thumb-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px;}
+  .photo-thumb-item{position:relative;flex-shrink:0;}
+  .photo-thumb-item img{width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block;}
+  .photo-thumb-remove{
+    position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:var(--rust);color:#fff;
+    font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--surface);
+  }
+  .photo-placeholder{color:var(--ink-soft);font-size:13px;padding:10px 0 16px;}
+  .photo-btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+
+  .field-error{color:var(--rust);font-size:12px;margin-top:6px;}
+
+  .doc{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px 16px;
+  }
+  .doc-title{font-family:var(--display);font-weight:700;font-size:22px;text-align:center;margin:0;}
+  .doc-sub{text-align:center;font-size:12px;color:var(--ink-soft);margin:4px 0 16px;text-transform:uppercase;letter-spacing:0.06em;}
+  .doc-hr{border:none;border-top:1.5px solid var(--teal);margin:10px 0 16px;}
+  .doc-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;margin-bottom:6px;}
+  .doc-field-label{font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);}
+  .doc-field-value{font-size:14px;font-weight:600;}
+  .doc-block{margin-top:12px;}
+  .doc-block .doc-field-value{font-weight:500;white-space:pre-wrap;}
+  .doc-room-title{font-family:var(--display);font-weight:700;font-size:16px;margin:18px 0 4px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .doc-room-notes{font-size:12px;color:var(--ink-soft);font-style:italic;margin-bottom:8px;}
+  .doc-window-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);}
+  .doc-window-row:last-child{border-bottom:none;}
+  .doc-window-num{font-family:var(--mono);font-weight:600;color:var(--teal-dark);width:20px;flex-shrink:0;}
+  .doc-window-thumb{width:46px;height:46px;border-radius:6px;object-fit:cover;flex-shrink:0;background:var(--surface-2);border:1px solid var(--border);}
+  .edit-link{font-size:12px;color:var(--teal-dark);text-decoration:underline;cursor:pointer;}
+
+  .sign-terms{font-size:13px;line-height:1.5;color:var(--ink-soft);background:var(--surface-2);border-radius:9px;padding:12px;margin-bottom:14px;}
+  canvas#sigPad{
+    width:100%;height:180px;
+    background:#fff;
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    touch-action:none;
+    display:block;
+  }
+  .sig-caption{font-size:11px;color:var(--ink-soft);text-align:center;margin-top:6px;}
+
+  .empty-state{text-align:center;padding:30px 10px;color:var(--ink-soft);}
+  .empty-state .big{font-size:34px;margin-bottom:8px;}
+
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(20,30,29,0.5);
+    display:flex;align-items:flex-end;justify-content:center;z-index:50;
+  }
+  .modal-sheet{
+    background:var(--surface);width:100%;max-width:520px;border-radius:16px 16px 0 0;
+    padding:20px 18px 24px;
+  }
+  .modal-title{font-family:var(--display);font-weight:700;font-size:18px;margin:0 0 8px;}
+  .modal-text{font-size:14px;color:var(--ink-soft);margin-bottom:18px;}
+  .modal-actions{display:flex;gap:10px;}
+  .modal-actions .btn{flex:1;}
+
+  .done-check{
+    width:64px;height:64px;border-radius:50%;background:var(--teal-tint);color:var(--teal-dark);
+    display:flex;align-items:center;justify-content:center;margin:10px auto 16px;font-size:30px;
+  }
+  .success-banner{background:var(--teal-tint);color:var(--teal-dark);border-radius:9px;padding:10px 12px;font-size:13px;margin-bottom:14px;}
+
+  @media (min-width:521px){
+    body{padding:20px 0;}
+    #app{border-radius:18px;overflow:hidden;min-height:auto;}
+    .header{border-radius:18px 18px 0 0;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ---------------- Config ---------------- */
+const COLOURS = { Brown:'#6B4A34', Black:'#1B1B1B', White:'#FFFFFF' };
+const COLOUR_RGB = { Brown:[107,74,52], Black:[27,27,27], White:[255,255,255] };
+const CONFIG_OPTIONS = [
+  'Left to right (roller on left)',
+  'Right to left (roller on right)',
+  'Centre opening (roller on both sides)',
+  'Top down (roller on top)',
+  'Custom'
+];
+
+/* ---------------- State ---------------- */
+const state = {
+  step: 'job', // job | rooms | room | window | review | done
+  currentRoomId: null,
+  editingWindowId: null,
+  job: {
+    customerName:'', addressLine1:'', addressLine2:'', postalCode:'', phone:'', email:'', notes:'',
+    date: new Date().toISOString().slice(0,10),
+    salesperson:''
+  },
+  rooms: [],
+  windowDraft: null,
+  newRoomName: '',
+  signerName: '',
+  signOffDate: new Date().toISOString().slice(0,10),
+  signatureData: null,
+  signedAt: null,
+  errors: {},
+  modal: null // {title, text, confirmLabel, danger, onConfirm}
+};
+let idSeq = 1;
+const newId = () => 'id' + (idSeq++);
+
+function esc(s){
+  return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtDate(d){
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return dt.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+}
+function addressLines(j){
+  const lines = [];
+  if (j.addressLine1) lines.push(j.addressLine1);
+  if (j.addressLine2) lines.push(j.addressLine2);
+  if (j.postalCode) lines.push('Postal Code: ' + j.postalCode);
+  return lines;
+}
+
+function getRoom(id){ return state.rooms.find(r=>r.id===id); }
+
+/* ---------------- Modal ---------------- */
+function openModal(opts){ state.modal = opts; render(); }
+function closeModal(){ state.modal = null; render(); }
+
+/* ---------------- Navigation actions ---------------- */
+function goStep(step){ state.step = step; render(); window.scrollTo(0,0); }
+
+function continueFromJob(){
+  const errs = {};
+  if (!state.job.customerName.trim()) errs.customerName = "Enter the customer's name";
+  state.errors = errs;
+  if (Object.keys(errs).length) { render(); return; }
+  goStep('rooms');
+}
+
+function addRoom(){
+  const name = state.newRoomName.trim();
+  if (!name) return;
+  state.rooms.push({ id:newId(), name, notes:'', windows:[] });
+  state.newRoomName = '';
+  render();
+}
+function deleteRoom(id){
+  const room = getRoom(id);
+  openModal({
+    title:'Delete room?',
+    text:`This removes "${room.name}" and all ${room.windows.length} window entr${room.windows.length===1?'y':'ies'} in it.`,
+    confirmLabel:'Delete room',
+    danger:true,
+    onConfirm:() => { state.rooms = state.rooms.filter(r=>r.id!==id); closeModal(); }
+  });
+}
+function openRoom(id){ state.currentRoomId = id; goStep('room'); }
+
+function totalWindows(){ return state.rooms.reduce((n,r)=>n+r.windows.length,0); }
+
+/* ---------------- Window draft ---------------- */
+function blankWindowDraft(){
+  return { id:null, photos:[], width:'', height:'', netType:'PET', frameColour:'Brown', configuration:'', customConfiguration:'', notes:'' };
+}
+function addWindow(){
+  state.windowDraft = blankWindowDraft();
+  state.editingWindowId = null;
+  state.errors = {};
+  goStep('window');
+}
+function editWindow(winId){
+  const room = getRoom(state.currentRoomId);
+  const w = room.windows.find(x=>x.id===winId);
+  state.windowDraft = Object.assign({}, w, { photos: (w.photos||[]).map(p=>Object.assign({},p)) });
+  state.editingWindowId = winId;
+  state.errors = {};
+  goStep('window');
+}
+function deleteWindow(winId){
+  const room = getRoom(state.currentRoomId);
+  openModal({
+    title:'Delete window?',
+    text:'This measurement entry will be removed.',
+    confirmLabel:'Delete window',
+    danger:true,
+    onConfirm:() => { room.windows = room.windows.filter(w=>w.id!==winId); closeModal(); }
+  });
+}
+function setDraftField(field, value){ state.windowDraft[field] = value; }
+function setNetType(v){ state.windowDraft.netType = v; render(); }
+function setFrameColour(v){ state.windowDraft.frameColour = v; render(); }
+function setConfiguration(v){
+  state.windowDraft.configuration = v;
+  if (v !== 'Custom') state.windowDraft.customConfiguration = '';
+  render();
+}
+
+function compressImageFile(file, cb){
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const maxW = 900;
+      const scale = Math.min(1, maxW/img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width*scale);
+      canvas.height = Math.round(img.height*scale);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      cb({ data: canvas.toDataURL('image/jpeg',0.72), ratio: canvas.width/canvas.height });
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function handlePhotoInput(fileInput){
+  const files = Array.from(fileInput.files || []);
+  files.forEach(file => {
+    compressImageFile(file, photoObj => {
+      state.windowDraft.photos.push(photoObj);
+      render();
+    });
+  });
+  fileInput.value = '';
+}
+function removePhotoAt(idx){ state.windowDraft.photos.splice(idx,1); render(); }
+
+function saveWindow(){
+  const errs = {};
+  const w = parseFloat(state.windowDraft.width);
+  const h = parseFloat(state.windowDraft.height);
+  if (!w || w<=0) errs.width = 'Enter width in cm';
+  if (!h || h<=0) errs.height = 'Enter height in cm';
+  state.errors = errs;
+  if (Object.keys(errs).length){ render(); return; }
+
+  const room = getRoom(state.currentRoomId);
+  if (state.editingWindowId){
+    const idx = room.windows.findIndex(x=>x.id===state.editingWindowId);
+    room.windows[idx] = Object.assign({}, state.windowDraft, {id:state.editingWindowId, width:w, height:h});
+  } else {
+    room.windows.push(Object.assign({}, state.windowDraft, {id:newId(), width:w, height:h}));
+  }
+  state.windowDraft = null;
+  goStep('room');
+}
+
+/* ---------------- Signature pad ---------------- */
+let sigCtx=null, drawing=false, sigHasInk=false;
+function initSigPad(){
+  const canvas = document.getElementById('sigPad');
+  if (!canvas) return;
+  const ratio = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width*ratio;
+  canvas.height = rect.height*ratio;
+  sigCtx = canvas.getContext('2d');
+  sigCtx.scale(ratio,ratio);
+  sigCtx.lineWidth = 2.2;
+  sigCtx.lineCap = 'round';
+  sigCtx.strokeStyle = '#1E2A2A';
+  sigHasInk = false;
+
+  const pos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX-r.left, y: p.clientY-r.top };
+  };
+  const start = (e) => { e.preventDefault(); drawing=true; const p=pos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x,p.y); };
+  const move = (e) => { if(!drawing) return; e.preventDefault(); const p=pos(e); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigHasInk=true; };
+  const end = (e) => { drawing=false; };
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+  canvas.addEventListener('touchstart', start, {passive:false});
+  canvas.addEventListener('touchmove', move, {passive:false});
+  canvas.addEventListener('touchend', end);
+}
+function clearSig(){
+  const canvas = document.getElementById('sigPad');
+  if (!canvas || !sigCtx) return;
+  sigCtx.clearRect(0,0,canvas.width,canvas.height);
+  sigHasInk = false;
+  const err = document.getElementById('sigError');
+  if (err) err.style.display='none';
+}
+function finalizeSign(){
+  const nameInput = document.getElementById('signerNameInput');
+  const dateInput = document.getElementById('signOffDateInput');
+  state.signerName = nameInput.value.trim();
+  state.signOffDate = dateInput.value || state.signOffDate;
+  const errs = {};
+  if (!state.signerName) errs.signerName = "Enter the signer's name";
+  if (!sigHasInk) errs.signature = 'Please sign in the box above';
+  state.errors = errs;
+  if (Object.keys(errs).length){ render(); return; }
+  const canvas = document.getElementById('sigPad');
+  state.signatureData = canvas.toDataURL('image/png');
+  state.signedAt = state.signOffDate;
+  generatePDF();
+  goStep('done');
+}
+
+/* ---------------- PDF generation ---------------- */
+function sanitizeFilename(s){ return String(s||'customer').trim().replace(/[^a-z0-9]+/gi,'_').slice(0,40); }
+
+function generatePDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'mm', format:'a4' });
+  const marginX = 16, pageW = 210, pageH = 297, contentW = pageW - marginX*2, pageBottom = 273;
+  let y = 40;
+
+  function ensureSpace(h){
+    if (y + h > pageBottom){ addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40; }
+  }
+
+  function drawHeaderBand(isFirst){
+    doc.setFillColor(28,78,76);
+    doc.rect(0,0,pageW, isFirst?34:16,'F');
+    doc.setDrawColor(45,100,97); doc.setLineWidth(0.25);
+    const bandH = isFirst?34:16;
+    for (let i=-bandH; i<pageW+bandH; i+=7){ doc.line(i,0,i+bandH,bandH); }
+    doc.setTextColor(255,255,255);
+    if (isFirst){
+      doc.setFont('helvetica','bold'); doc.setFontSize(20);
+      doc.text('BuzzBlock', marginX, 15);
+      doc.setFont('helvetica','normal'); doc.setFontSize(10.5);
+      doc.text('Site Survey & Order Confirmation', marginX, 23);
+      doc.setFontSize(8.5);
+      doc.text(`Survey date: ${fmtDate(state.job.date)}`, pageW-marginX, 15, {align:'right'});
+      if (state.job.salesperson) doc.text(`Sales rep: ${state.job.salesperson}`, pageW-marginX, 20, {align:'right'});
+    } else {
+      doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      doc.text('BuzzBlock — Site Survey (cont.)', marginX, 10.5);
+    }
+    doc.setTextColor(0,0,0);
+  }
+
+  function pillWidth(text){ doc.setFontSize(8.5); return doc.getTextWidth(text)+7; }
+  function drawPill(x, yy, text, fillRGB, textRGB, dotRGB){
+    doc.setFontSize(8.5);
+    let extra = dotRGB ? 4 : 0;
+    const w = doc.getTextWidth(text)+7+extra;
+    doc.setFillColor(fillRGB[0],fillRGB[1],fillRGB[2]);
+    doc.roundedRect(x, yy-3.6, w, 5.2, 2.6, 2.6, 'F');
+    let tx = x+3.5;
+    if (dotRGB){
+      doc.setFillColor(dotRGB[0],dotRGB[1],dotRGB[2]);
+      doc.setDrawColor(150,150,150); doc.setLineWidth(0.15);
+      doc.circle(x+3.6, yy-0.9, 1.4, dotRGB[0]===255&&dotRGB[1]===255&&dotRGB[2]===255?'FD':'F');
+      tx += 4.2;
+    }
+    doc.setTextColor(textRGB[0],textRGB[1],textRGB[2]);
+    doc.text(text, tx, yy);
+    doc.setTextColor(0,0,0);
+    return x+w+3;
+  }
+  function addFooterPlaceholder(){ /* footer text added in final pass over all pages */ }
+
+  drawHeaderBand(true);
+
+  /* -------- Job info card -------- */
+  const j = state.job;
+  let addrLines = [];
+  addressLines(j).forEach(part => { addrLines = addrLines.concat(doc.splitTextToSize(part, contentW-16)); });
+  const notesLines = j.notes ? doc.splitTextToSize(j.notes, contentW-16) : [];
+  const pairRows = [
+    ['Customer', j.customerName || '-', 'Date', fmtDate(j.date)],
+    ['Phone', j.phone || '-', 'Email', j.email || '-'],
+    ['Sales rep', j.salesperson || '-', 'Total windows', String(totalWindows())]
+  ];
+  let boxH = 9 + pairRows.length*9.6;
+  if (addrLines.length) boxH += 5 + addrLines.length*4.4;
+  if (notesLines.length) boxH += 5 + notesLines.length*4.4;
+  boxH += 5;
+
+  doc.setFillColor(243,245,243);
+  doc.setDrawColor(213,219,216); doc.setLineWidth(0.3);
+  doc.roundedRect(marginX, y, contentW, boxH, 3, 3, 'FD');
+
+  let iy = y+9;
+  const colX2 = marginX + contentW/2;
+  pairRows.forEach(([l1,v1,l2,v2])=>{
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.3); doc.setTextColor(110,124,121);
+    doc.text(l1.toUpperCase(), marginX+8, iy);
+    doc.text(l2.toUpperCase(), colX2, iy);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10.5); doc.setTextColor(30,42,42);
+    doc.text(String(v1), marginX+8, iy+4.6);
+    doc.text(String(v2), colX2, iy+4.6);
+    iy += 9.6;
+  });
+  if (addrLines.length){
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.3); doc.setTextColor(110,124,121);
+    doc.text('ADDRESS', marginX+8, iy);
+    doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(30,42,42);
+    doc.text(addrLines, marginX+8, iy+4.4);
+    iy += 5 + addrLines.length*4.4;
+  }
+  if (notesLines.length){
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.3); doc.setTextColor(110,124,121);
+    doc.text('GENERAL NOTES', marginX+8, iy);
+    doc.setFont('helvetica','italic'); doc.setFontSize(9.5); doc.setTextColor(70,80,78);
+    doc.text(notesLines, marginX+8, iy+4.4);
+    iy += 5 + notesLines.length*4.4;
+  }
+  doc.setTextColor(0,0,0);
+  y += boxH + 8;
+
+  /* -------- Rooms -------- */
+  state.rooms.forEach((room, ri) => {
+    ensureSpace(18);
+    doc.setFillColor(43,110,107);
+    doc.roundedRect(marginX, y, contentW, 8.5, 2, 2, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11.5);
+    doc.text(`Room ${ri+1} \u2014 ${room.name}`, marginX+4.5, y+5.8);
+    doc.setTextColor(0,0,0);
+    y += 8.5 + 5;
+
+    if (room.notes){
+      const rn = doc.splitTextToSize(room.notes, contentW-4);
+      ensureSpace(rn.length*4.2+4);
+      doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,100,98);
+      doc.text(rn, marginX+2, y);
+      doc.setTextColor(0,0,0);
+      y += rn.length*4.2 + 5;
+    }
+
+    if (!room.windows.length){
+      ensureSpace(10);
+      doc.setFont('helvetica','italic'); doc.setFontSize(10); doc.setTextColor(140,140,140);
+      doc.text('No windows recorded for this room.', marginX+2, y);
+      doc.setTextColor(0,0,0);
+      y += 10;
+      return;
+    }
+
+    room.windows.forEach((w, wi) => {
+      const photos = (w.photos||[]).slice(0,4);
+      const notesLinesW = w.notes ? doc.splitTextToSize(w.notes, contentW-16) : [];
+      const configLine = w.configuration ? (w.configuration==='Custom' ? (w.customConfiguration||'Custom configuration') : w.configuration) : '';
+
+      const photoBoxSize = 20;
+      const photoRowH = (photos.length || true) ? photoBoxSize + 6 : 0;
+      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/;
+      if (configLine) cardH += 5.2;
+      if (notesLinesW.length) cardH += notesLinesW.length*4.2 + 3;
+      cardH += 8;
+
+      ensureSpace(cardH+4);
+
+      doc.setFillColor(250,250,249);
+      doc.setDrawColor(219,224,222); doc.setLineWidth(0.3);
+      doc.roundedRect(marginX, y, contentW, cardH, 3, 3, 'FD');
+
+      doc.setFillColor(43,110,107);
+      doc.circle(marginX+10, y+10, 4.3, 'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+      doc.text(String(wi+1), marginX+10, y+11.5, {align:'center'});
+      doc.setTextColor(0,0,0);
+
+      let px = marginX+18;
+      const py = y+6;
+      if (photos.length){
+        photos.forEach(p => {
+          let iw = photoBoxSize, ih = photoBoxSize;
+          if (p.ratio){
+            if (p.ratio>=1){ iw=photoBoxSize; ih=photoBoxSize/p.ratio; } else { ih=photoBoxSize; iw=photoBoxSize*p.ratio; }
+          }
+          try { doc.addImage(p.data,'JPEG', px, py, iw, ih); } catch(e){}
+          doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
+          doc.rect(px, py, iw, ih);
+          px += photoBoxSize + 3;
+        });
+        if ((w.photos||[]).length > 4){
+          doc.setFontSize(7.5); doc.setTextColor(140,140,140);
+          doc.text(`+${w.photos.length-4} more on file`, px, py+photoBoxSize/2);
+          doc.setTextColor(0,0,0);
+        }
+      } else {
+        doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
+        doc.rect(px, py, photoBoxSize, photoBoxSize);
+        doc.setFontSize(7.5); doc.setTextColor(150,150,150);
+        doc.text('No photo', px+3, py+photoBoxSize/2);
+        doc.setTextColor(0,0,0);
+      }
+
+      let ty = y + photoRowH + 4;
+      doc.setFont('helvetica','bold'); doc.setFontSize(11);
+      doc.text(`${w.width} \u00d7 ${w.height} cm`, marginX+8, ty);
+      ty += 6.2;
+
+      let px2 = marginX+8;
+      px2 = drawPill(px2, ty, w.netType, [222,235,234], [28,78,76]);
+      px2 = drawPill(px2, ty, w.frameColour, [243,245,243], [30,42,42], COLOUR_RGB[w.frameColour]);
+      ty += 1;
+
+      if (configLine){
+        ty += 5.2;
+        doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(90,100,98);
+        doc.text(`Opening: ${configLine}`, marginX+8, ty);
+        doc.setTextColor(0,0,0);
+      }
+      if (notesLinesW.length){
+        ty += (configLine?4.6:5.5);
+        doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,100,98);
+        doc.text(notesLinesW, marginX+8, ty);
+        doc.setTextColor(0,0,0);
+      }
+
+      y += cardH + 5;
+    });
+    y += 2;
+  });
+
+  /* -------- Customer confirmation -------- */
+  ensureSpace(70);
+  doc.setFillColor(43,110,107);
+  doc.roundedRect(marginX, y, contentW, 8.5, 2, 2, 'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11.5);
+  doc.text('Customer Confirmation', marginX+4.5, y+5.8);
+  doc.setTextColor(0,0,0);
+  y += 8.5+7;
+
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,60,58);
+  const confirmText = `By signing below, ${state.signerName} confirms that the measurements, net type, frame colour and opening configuration listed above have been reviewed on-site and are approved for order.`;
+  const confirmLines = doc.splitTextToSize(confirmText, contentW-4);
+  doc.text(confirmLines, marginX+2, y);
+  doc.setTextColor(0,0,0);
+  y += confirmLines.length*5 + 8;
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.text('Signed by:', marginX+2, y);
+  doc.setFont('helvetica','normal'); doc.text(state.signerName, marginX+26, y);
+  doc.setFont('helvetica','bold'); doc.text('Date:', marginX+contentW/2, y);
+  doc.setFont('helvetica','normal'); doc.text(fmtDate(state.signOffDate), marginX+contentW/2+14, y);
+  y += 9;
+
+  if (state.signatureData){
+    ensureSpace(38);
+    doc.setDrawColor(219,224,222); doc.setLineWidth(0.3);
+    doc.roundedRect(marginX+2, y, 70, 28, 2, 2, 'D');
+    try { doc.addImage(state.signatureData, 'PNG', marginX+4, y+2, 66, 24); } catch(e){}
+    y += 30;
+  }
+  doc.setDrawColor(150,150,150); doc.setLineWidth(0.2);
+  doc.line(marginX+2, y, marginX+72, y);
+  doc.setFontSize(8); doc.setTextColor(120,120,120);
+  doc.text('Customer signature', marginX+2, y+4);
+  doc.setTextColor(0,0,0);
+
+  /* -------- Footer on every page -------- */
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let p=1; p<=pageCount; p++){
+    doc.setPage(p);
+    doc.setDrawColor(225,228,226); doc.setLineWidth(0.25);
+    doc.line(marginX, pageH-14, pageW-marginX, pageH-14);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(140,140,140);
+    doc.text('Generated by BuzzBlock Site Survey App', marginX, pageH-9);
+    doc.text(`Page ${p} of ${pageCount}`, pageW-marginX, pageH-9, {align:'right'});
+    doc.setTextColor(0,0,0);
+  }
+
+  const filename = `BuzzBlock_Survey_${sanitizeFilename(state.job.customerName)}_${state.job.date}.pdf`;
+  state.lastPdfFilename = filename;
+  doc.save(filename);
+}
+
+/* ---------------- Reset ---------------- */
+function confirmReset(){
+  openModal({
+    title:'Start a new survey?',
+    text:"This clears the current customer, rooms and windows. Make sure you've already saved the PDF if you need it.",
+    confirmLabel:'Start new survey',
+    danger:true,
+    onConfirm:() => {
+      state.step='job'; state.currentRoomId=null; state.editingWindowId=null;
+      state.job={customerName:'',addressLine1:'',addressLine2:'',postalCode:'',phone:'',email:'',notes:'',date:new Date().toISOString().slice(0,10),salesperson:''};
+      state.rooms=[]; state.windowDraft=null; state.newRoomName='';
+      state.signerName=''; state.signOffDate=new Date().toISOString().slice(0,10);
+      state.signatureData=null; state.signedAt=null; state.errors={};
+      closeModal();
+    }
+  });
+}
+
+/* ---------------- Render ---------------- */
+function stepIndex(){
+  return {job:0, rooms:1, room:1, window:1, review:2, done:2}[state.step];
+}
+function renderSteps(){
+  const labels = ['Details','Rooms & Windows','Review & Sign-off'];
+  const cur = stepIndex();
+  return `<div class="steps">${labels.map((l,i)=>{
+    const cls = i===cur ? 'active' : (i<cur ? 'done' : '');
+    return `<div class="step-pill ${cls}">${i+1}. ${l}</div>`;
+  }).join('')}</div>`;
+}
+
+function renderHeader(){
+  const showReset = state.step !== 'job' || state.rooms.length>0;
+  return `
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">BuzzBlock Site Survey<small>Field measurement &amp; sign-off</small></div>
+      ${showReset ? `<button class="reset-btn" onclick="confirmReset()">New survey</button>` : ''}
+    </div>
+    ${renderSteps()}
+  </div>`;
+}
+
+function renderJobStep(){
+  const j = state.job, e = state.errors;
+  return `
+  <div class="card">
+    <div class="section-title">Customer &amp; job details</div>
+    <p class="section-sub">Start every visit here. You can edit these later from the review screen.</p>
+
+    <label>Customer name</label>
+    <input type="text" value="${esc(j.customerName)}" oninput="state.job.customerName=this.value" placeholder="e.g. John Tan">
+    ${e.customerName?`<div class="field-error">${esc(e.customerName)}</div>`:''}
+
+    <label>Address line 1</label>
+    <input type="text" value="${esc(j.addressLine1)}" oninput="state.job.addressLine1=this.value" placeholder="Block / street / unit">
+
+    <label>Address line 2 (optional)</label>
+    <input type="text" value="${esc(j.addressLine2)}" oninput="state.job.addressLine2=this.value" placeholder="Additional address details">
+
+    <label>Postal code</label>
+    <input type="text" inputmode="numeric" value="${esc(j.postalCode)}" oninput="state.job.postalCode=this.value" placeholder="e.g. 123456">
+
+    <div class="row2">
+      <div>
+        <label>Phone</label>
+        <input type="tel" value="${esc(j.phone)}" oninput="state.job.phone=this.value" placeholder="Contact number">
+      </div>
+      <div>
+        <label>Survey date</label>
+        <input type="date" value="${esc(j.date)}" oninput="state.job.date=this.value">
+      </div>
+    </div>
+
+    <label>Email (optional)</label>
+    <input type="email" value="${esc(j.email)}" oninput="state.job.email=this.value" placeholder="customer@email.com">
+
+    <label>Sales rep name</label>
+    <input type="text" value="${esc(j.salesperson)}" oninput="state.job.salesperson=this.value" placeholder="Your name">
+
+    <label>General notes (optional)</label>
+    <textarea oninput="state.job.notes=this.value" placeholder="Anything about the overall job">${esc(j.notes)}</textarea>
+  </div>
+  <div class="bottom-bar"><button class="btn btn-primary" onclick="continueFromJob()">Continue to rooms</button></div>
+  `;
+}
+
+function renderRoomsStep(){
+  const rooms = state.rooms;
+  return `
+  <div class="card">
+    <div class="section-title">Rooms</div>
+    <p class="section-sub">Add each room, then tap it to record window measurements.</p>
+    <div class="add-inline">
+      <input type="text" id="newRoomInput" value="${esc(state.newRoomName)}" oninput="state.newRoomName=this.value"
+        placeholder="Room name, e.g. Master bedroom" onkeydown="if(event.key==='Enter'){addRoom(); document.getElementById('newRoomInput')?.focus();}">
+      <button class="btn btn-outline btn-sm" onclick="addRoom()">Add</button>
+    </div>
+  </div>
+
+  ${rooms.length===0 ? `
+    <div class="empty-state">
+      <div class="big">🏠</div>
+      No rooms yet — add the first one above.
+    </div>` : rooms.map(r => `
+    <div class="room-card">
+      <div class="room-top">
+        <div class="room-icon">${r.windows.length}</div>
+        <div class="room-main" onclick="openRoom('${r.id}')">
+          <div class="room-name">${esc(r.name)}</div>
+          <div class="room-meta ${r.windows.length===0?'warn':''}">${r.windows.length===0 ? 'No windows added yet' : r.windows.length+' window'+(r.windows.length===1?'':'s')+' recorded'}</div>
+        </div>
+        <div class="room-actions">
+          <div class="icon-btn" onclick="openRoom('${r.id}')" title="Open">›</div>
+          <div class="icon-btn danger" onclick="deleteRoom('${r.id}')" title="Delete">✕</div>
+        </div>
+      </div>
+      <textarea class="room-notes-input" placeholder="Room notes (optional)" oninput="getRoom('${r.id}').notes=this.value">${esc(r.notes)}</textarea>
+    </div>
+  `).join('')}
+
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" onclick="goStep('job')">Back</button>
+    <button class="btn btn-primary" ${rooms.length===0?'disabled':''} onclick="goStep('review')">Review form (${totalWindows()} window${totalWindows()===1?'':'s'})</button>
+  </div>`;
+}
+
+function renderRoomStep(){
+  const room = getRoom(state.currentRoomId);
+  if (!room) { goStep('rooms'); return ''; }
+  return `
+  <div class="card">
+    <div class="section-title">${esc(room.name)}</div>
+    <p class="section-sub">Add every window in this room with photos and measurements.</p>
+    <button class="btn btn-primary btn-block" onclick="addWindow()">+ Add window</button>
+  </div>
+
+  ${room.windows.length===0 ? `
+    <div class="empty-state"><div class="big">🪟</div>No windows added to this room yet.</div>
+  ` : room.windows.map((w,i)=>`
+    <div class="window-card">
+      ${w.photos && w.photos.length ? `
+        <div class="thumb-wrap">
+          <img class="window-thumb" src="${w.photos[0].data}">
+          ${w.photos.length>1?`<div class="thumb-count">+${w.photos.length-1}</div>`:''}
+        </div>
+      ` : `<div class="window-thumb placeholder">📷</div>`}
+      <div class="window-main">
+        <div class="window-dims">${w.width} × ${w.height} cm</div>
+        <div class="tag-row">
+          <span class="tag">${esc(w.netType)}</span>
+          <span class="tag"><span class="swatch" style="background:${COLOURS[w.frameColour]}"></span>${esc(w.frameColour)}</span>
+          ${w.configuration ? `<span class="tag">${esc(w.configuration==='Custom' ? (w.customConfiguration||'Custom') : w.configuration)}</span>` : ''}
+        </div>
+        ${w.notes ? `<div class="window-notes">${esc(w.notes)}</div>` : ''}
+      </div>
+      <div class="window-actions">
+        <div class="icon-btn" onclick="editWindow('${w.id}')" title="Edit">✎</div>
+        <div class="icon-btn danger" onclick="deleteWindow('${w.id}')" title="Delete">✕</div>
+      </div>
+    </div>
+  `).join('')}
+
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" onclick="goStep('rooms')">Back to rooms</button>
+  </div>`;
+}
+
+function renderWindowStep(){
+  const d = state.windowDraft, e = state.errors;
+  const isEdit = !!state.editingWindowId;
+  return `
+  <div class="card">
+    <div class="section-title">${isEdit?'Edit window':'Add window'}</div>
+
+    <label>Photos</label>
+    <div class="photo-box">
+      ${d.photos.length ? `
+        <div class="photo-thumb-row">
+          ${d.photos.map((p,idx)=>`
+            <div class="photo-thumb-item">
+              <img src="${p.data}">
+              <div class="photo-thumb-remove" onclick="removePhotoAt(${idx})">✕</div>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<div class="photo-placeholder">No photos yet</div>`}
+      <input type="file" accept="image/*" capture="environment" id="cameraFileInput" style="display:none" onchange="handlePhotoInput(this)">
+      <input type="file" accept="image/*" multiple id="libraryFileInput" style="display:none" onchange="handlePhotoInput(this)">
+      <div class="photo-btn-row">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('cameraFileInput').click()">📷 Take photo</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('libraryFileInput').click()">🖼 Add from library</button>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div>
+        <label>Width (cm)</label>
+        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.width)}" oninput="setDraftField('width', this.value)" placeholder="0.0">
+        ${e.width?`<div class="field-error">${esc(e.width)}</div>`:''}
+      </div>
+      <div>
+        <label>Height (cm)</label>
+        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.height)}" oninput="setDraftField('height', this.value)" placeholder="0.0">
+        ${e.height?`<div class="field-error">${esc(e.height)}</div>`:''}
+      </div>
+    </div>
+
+    <label>Net type</label>
+    <div class="toggle-row">
+      ${['PET','Stainless Steel'].map(nt=>`
+        <div class="toggle-btn ${d.netType===nt?'selected':''}" onclick="setNetType('${nt}')">${nt}</div>
+      `).join('')}
+    </div>
+
+    <label>Frame colour</label>
+    <div class="colour-row">
+      ${Object.keys(COLOURS).map(c=>`
+        <div class="colour-btn ${d.frameColour===c?'selected':''}" onclick="setFrameColour('${c}')">
+          <span class="colour-dot" style="background:${COLOURS[c]}"></span>${c}
+        </div>
+      `).join('')}
+    </div>
+
+    <label>Opening / Configuration</label>
+    <select onchange="setConfiguration(this.value)">
+      <option value="" ${d.configuration===''?'selected':''} disabled>Select configuration</option>
+      ${CONFIG_OPTIONS.map(opt=>`<option value="${esc(opt)}" ${d.configuration===opt?'selected':''}>${esc(opt)}</option>`).join('')}
+    </select>
+    ${d.configuration==='Custom' ? `
+      <input type="text" style="margin-top:8px;" value="${esc(d.customConfiguration)}" oninput="setDraftField('customConfiguration', this.value)" placeholder="Describe the configuration">
+    ` : ''}
+
+    <label>Notes (optional)</label>
+    <textarea oninput="setDraftField('notes', this.value)" placeholder="Anything the workshop should know">${esc(d.notes)}</textarea>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" onclick="state.windowDraft=null; goStep('room')">Cancel</button>
+    <button class="btn btn-primary" onclick="saveWindow()">${isEdit?'Save changes':'Add window'}</button>
+  </div>`;
+}
+
+function renderReviewStep(){
+  const j = state.job, e = state.errors;
+  return `
+  <div class="doc">
+    <p class="doc-title">BuzzBlock Site Survey</p>
+    <p class="doc-sub">Insect screen measurements &amp; specification</p>
+    <hr class="doc-hr">
+    <div class="doc-grid">
+      <div><div class="doc-field-label">Customer</div><div class="doc-field-value">${esc(j.customerName)||'—'}</div></div>
+      <div><div class="doc-field-label">Date</div><div class="doc-field-value">${fmtDate(j.date)}</div></div>
+      <div><div class="doc-field-label">Phone</div><div class="doc-field-value">${esc(j.phone)||'—'}</div></div>
+      <div><div class="doc-field-label">Email</div><div class="doc-field-value">${esc(j.email)||'—'}</div></div>
+      <div><div class="doc-field-label">Sales rep</div><div class="doc-field-value">${esc(j.salesperson)||'—'}</div></div>
+      <div><div class="doc-field-label">Total windows</div><div class="doc-field-value">${totalWindows()}</div></div>
+    </div>
+    ${addressLines(j).length ? `<div class="doc-block"><div class="doc-field-label">Address</div><div class="doc-field-value">${addressLines(j).map(esc).join('<br>')}</div></div>` : ''}
+    ${j.notes ? `<div class="doc-block"><div class="doc-field-label">General notes</div><div class="doc-field-value">${esc(j.notes)}</div></div>` : ''}
+    <div style="text-align:right;margin-top:8px;"><span class="edit-link" onclick="goStep('job')">Edit details</span></div>
+
+    ${state.rooms.map((r,ri)=>`
+      <div class="doc-room-title">Room ${ri+1} — ${esc(r.name)} <span class="edit-link" style="float:right;font-weight:400;" onclick="openRoom('${r.id}')">Edit</span></div>
+      ${r.notes ? `<div class="doc-room-notes">${esc(r.notes)}</div>` : ''}
+      ${r.windows.length===0 ? `<div class="window-notes">No windows recorded.</div>` : r.windows.map((w,wi)=>`
+        <div class="doc-window-row">
+          <div class="doc-window-num">${wi+1}</div>
+          ${w.photos && w.photos.length ? `<img class="doc-window-thumb" src="${w.photos[0].data}">` : `<div class="doc-window-thumb"></div>`}
+          <div style="flex:1;">
+            <div class="window-dims">${w.width} × ${w.height} cm</div>
+            <div class="tag-row">
+              <span class="tag">${esc(w.netType)}</span>
+              <span class="tag"><span class="swatch" style="background:${COLOURS[w.frameColour]}"></span>${esc(w.frameColour)}</span>
+              ${w.configuration ? `<span class="tag">${esc(w.configuration==='Custom' ? (w.customConfiguration||'Custom') : w.configuration)}</span>` : ''}
+              ${w.photos && w.photos.length>1 ? `<span class="tag">${w.photos.length} photos</span>` : ''}
+            </div>
+            ${w.notes?`<div class="window-notes">${esc(w.notes)}</div>`:''}
+          </div>
+        </div>
+      `).join('')}
+    `).join('')}
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="section-title">Customer sign-off</div>
+    <div class="sign-terms">By signing, the customer confirms the measurements, net type, frame colour and opening configuration on the form are correct and approved for order.</div>
+
+    <div class="row2">
+      <div>
+        <label>Signer's name</label>
+        <input type="text" id="signerNameInput" value="${esc(state.signerName || state.job.customerName)}" placeholder="Full name">
+        ${e.signerName?`<div class="field-error">${esc(e.signerName)}</div>`:''}
+      </div>
+      <div>
+        <label>Sign-off date</label>
+        <input type="date" id="signOffDateInput" value="${esc(state.signOffDate)}">
+      </div>
+    </div>
+
+    <label>Signature</label>
+    <canvas id="sigPad"></canvas>
+    <div class="sig-caption">Sign with finger or stylus above</div>
+    ${e.signature?`<div class="field-error" id="sigError">${esc(e.signature)}</div>`:'<div class="field-error" id="sigError" style="display:none;"></div>'}
+    <div style="margin-top:10px;"><button class="btn btn-ghost btn-sm" onclick="clearSig()">Clear signature</button></div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" onclick="goStep('rooms')">Back</button>
+    <button class="btn btn-primary" onclick="finalizeSign()">Confirm &amp; save PDF</button>
+  </div>`;
+}
+
+function renderDoneStep(){
+  return `
+  <div class="card" style="text-align:center;">
+    <div class="done-check">✓</div>
+    <div class="section-title">Signed &amp; saved</div>
+    <div class="success-banner">${esc(state.lastPdfFilename || 'Survey.pdf')} was downloaded to this device.</div>
+    <p class="section-sub" style="margin-top:0;">Share it with the customer from your downloads, or generate it again below.</p>
+    <button class="btn btn-outline btn-block" onclick="generatePDF()">Download PDF again</button>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-ghost" onclick="goStep('review')">View form</button>
+    <button class="btn btn-primary" onclick="confirmReset()">Start next survey</button>
+  </div>`;
+}
+
+function renderModal(){
+  if (!state.modal) return '';
+  const m = state.modal;
+  return `
+  <div class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-title">${esc(m.title)}</div>
+      <div class="modal-text">${esc(m.text)}</div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn ${m.danger?'btn-danger':'btn-primary'}" id="modalConfirmBtn">${esc(m.confirmLabel)}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  let content = '';
+  switch(state.step){
+    case 'job': content = renderJobStep(); break;
+    case 'rooms': content = renderRoomsStep(); break;
+    case 'room': content = renderRoomStep(); break;
+    case 'window': content = renderWindowStep(); break;
+    case 'review': content = renderReviewStep(); break;
+    case 'done': content = renderDoneStep(); break;
+  }
+  document.getElementById('app').innerHTML = `
+    ${renderHeader()}
+    <div class="content">${content}</div>
+    ${renderModal()}
+  `;
+  if (state.modal){
+    const btn = document.getElementById('modalConfirmBtn');
+    if (btn) btn.onclick = state.modal.onConfirm;
+  }
+  if (state.step === 'review'){
+    setTimeout(initSigPad, 0);
+  }
+}
+
+render();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('Service worker registration failed:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
