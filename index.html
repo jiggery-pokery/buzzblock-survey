@@ -228,6 +228,8 @@
   .tag{font-size:11px;padding:3px 8px;border-radius:20px;background:var(--surface-2);border:1px solid var(--border);color:var(--ink-soft);display:inline-flex;align-items:center;gap:5px;}
   .swatch{width:9px;height:9px;border-radius:50%;display:inline-block;border:1px solid rgba(0,0,0,0.2);}
   .window-notes{font-size:12px;color:var(--ink-soft);margin-top:6px;font-style:italic;}
+  .window-price{font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--teal-dark);margin-top:6px;}
+  .window-price.warn{color:var(--rust);font-family:var(--body);font-weight:600;}
   .window-actions{display:flex;flex-direction:column;gap:6px;}
 
   .toggle-row{display:flex;gap:8px;margin-top:2px;}
@@ -258,10 +260,53 @@
     position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;background:var(--rust);color:#fff;
     font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--surface);
   }
+  .photo-thumb-save{
+    position:absolute;bottom:-7px;left:-7px;width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;
+    font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--surface);
+  }
   .photo-placeholder{color:var(--ink-soft);font-size:13px;padding:10px 0 16px;}
   .photo-btn-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 
   .field-error{color:var(--rust);font-size:12px;margin-top:6px;}
+
+  .price-preview{
+    background:var(--teal-tint);
+    border:1px solid #BFDAD8;
+    border-radius:9px;
+    padding:10px 12px;
+    margin-top:10px;
+  }
+  .price-preview.muted{background:var(--surface-2);border-color:var(--border);color:var(--ink-soft);font-size:13px;}
+  .price-preview.warn{background:var(--rust-tint);border-color:#E8B9A4;color:var(--rust);font-size:13px;padding:10px 12px;border-radius:9px;margin-top:10px;}
+  .price-preview-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  .price-model{font-family:var(--display);font-weight:700;font-size:14px;color:var(--teal-dark);letter-spacing:0.01em;}
+  .price-amount{font-family:var(--mono);font-weight:700;font-size:17px;color:var(--teal-dark);}
+  .price-preview-sub{font-size:11.5px;color:var(--ink-soft);margin-top:3px;}
+  .price-min-note{color:var(--amber);}
+
+  .price-summary{
+    background:var(--teal-dark);
+    color:#fff;
+    border-radius:var(--radius);
+    padding:16px;
+    margin-top:14px;
+  }
+  .price-summary-title{font-family:var(--display);font-weight:700;font-size:16px;margin-bottom:10px;text-transform:uppercase;letter-spacing:0.03em;}
+  .price-summary-row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0;color:rgba(255,255,255,0.85);}
+  .price-summary-row.total{
+    border-top:1px solid rgba(255,255,255,0.25);margin-top:6px;padding-top:10px;
+    font-family:var(--display);font-weight:700;font-size:19px;color:#fff;letter-spacing:0.01em;
+  }
+  .price-summary-note{font-size:11px;color:rgba(255,255,255,0.65);margin-top:8px;line-height:1.4;}
+  .promo-label{
+    font-family:var(--display);font-size:11px;letter-spacing:0.05em;text-transform:uppercase;
+    color:rgba(255,255,255,0.7);margin:12px 0 5px;
+  }
+  .price-summary input[type=text]{
+    background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.3);color:#fff;
+  }
+  .price-summary input[type=text]::placeholder{color:rgba(255,255,255,0.5);}
+  .price-summary input[type=text]:focus{outline:2px solid rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.6);}
 
   .doc{
     background:var(--surface);
@@ -340,6 +385,119 @@ const CONFIG_OPTIONS = [
   'Custom'
 ];
 
+/* ---------------- Pricing ----------------
+   Edit these constants if the supplier's rates or your labour policy change. */
+const PRICING = {
+  ratePetPerSqm: 265,          // S$ per m² — PET mesh (default)
+  stainlessSurchargePerSqm: 30, // S$ per m² added on top, for Stainless Steel mesh
+  labourFee: 300,               // S$ flat labour/trip fee for small jobs
+  labourWaiveThreshold: 300     // labour fee is waived once the window subtotal reaches this (S$)
+};
+// Model max width (cm) and minimum chargeable area (m²), from the supplier price list.
+const MODEL_TIERS = [
+  { maxWidthCm: 120, minAreaSqm: 1.0, petName: '835加锁款', steelName: '835防猫款' },
+  { maxWidthCm: 200, minAreaSqm: 1.2, petName: '856纱窗款', steelName: '856纱窗款' },
+  { maxWidthCm: 500, minAreaSqm: 3.0, petName: '876阳台款', steelName: '876阳台款' }
+];
+
+function fmtSGD(n){
+  if (n==null || isNaN(n)) return '—';
+  return 'S$' + n.toLocaleString('en-SG', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+// Derives the product model, chargeable area and price for one window.
+// Returns null fields (price:null) if width/height aren't filled in yet, or width exceeds every model's max.
+function getModelInfo(w){
+  const width = parseFloat(w.width), height = parseFloat(w.height);
+  if (!width || !height || width<=0 || height<=0){
+    return { model:null, rawArea:null, chargeableArea:null, minArea:null, ratePerSqm:null, price:null, exceedsMax:false };
+  }
+  const tier = MODEL_TIERS.find(t => width <= t.maxWidthCm);
+  const ratePerSqm = PRICING.ratePetPerSqm + (w.netType==='Stainless Steel' ? PRICING.stainlessSurchargePerSqm : 0);
+  if (!tier){
+    return { model:null, rawArea:(width/100)*(height/100), chargeableArea:null, minArea:null, ratePerSqm, price:null, exceedsMax:true };
+  }
+  const model = w.netType==='Stainless Steel' ? tier.steelName : tier.petName;
+  const rawArea = (width/100)*(height/100);
+  const chargeableArea = Math.max(rawArea, tier.minAreaSqm);
+  const price = chargeableArea * ratePerSqm;
+  return { model, rawArea, chargeableArea, minArea:tier.minAreaSqm, ratePerSqm, price, exceedsMax:false };
+}
+
+// Sums pricing across every window in every room, and applies the labour fee rule.
+function computeJobPricing(){
+  let subtotal = 0, windowCount = 0, unpriced = 0;
+  state.rooms.forEach(r => r.windows.forEach(w => {
+    windowCount++;
+    const info = getModelInfo(w);
+    if (info.price!=null) subtotal += info.price; else unpriced++;
+  }));
+  const labourWaived = subtotal >= PRICING.labourWaiveThreshold;
+  const labourFee = labourWaived ? 0 : PRICING.labourFee;
+  const total = subtotal + labourFee;
+  return { subtotal, labourFee, labourWaived, total, windowCount, unpriced };
+}
+
+// Promo codes are the format "discountXX" (e.g. discount20 = 20% off), capped at 25%.
+const MAX_DISCOUNT_PERCENT = 25;
+function getDiscountPercent(){
+  const code = (state.promoCode||'').trim().toLowerCase();
+  if (!code) return 0;
+  const m = code.match(/^discount(\d{1,2})$/);
+  if (!m) return 0;
+  let pct = parseInt(m[1], 10);
+  if (isNaN(pct) || pct<0) return 0;
+  if (pct > MAX_DISCOUNT_PERCENT) pct = MAX_DISCOUNT_PERCENT;
+  return pct;
+}
+// Full pricing including any promo code discount, applied over the subtotal+labour total.
+function computeFinalPricing(){
+  const p = computeJobPricing();
+  const discountPercent = getDiscountPercent();
+  const discountAmount = p.total * (discountPercent/100);
+  const finalTotal = p.total - discountAmount;
+  return Object.assign({}, p, { discountPercent, discountAmount, finalTotal });
+}
+
+function renderPriceSummaryTotals(){
+  const fp = computeFinalPricing();
+  const codeEntered = (state.promoCode||'').trim().length>0;
+  const invalidCode = codeEntered && fp.discountPercent===0;
+  return `
+    ${fp.discountPercent>0 ? `<div class="price-summary-row"><span>Promo code (${fp.discountPercent}% off)</span><span>\u2212${fmtSGD(fp.discountAmount)}</span></div>` : ''}
+    <div class="price-summary-row total"><span>Total</span><span>${fmtSGD(fp.finalTotal)}</span></div>
+    ${invalidCode ? `<div class="price-summary-note" style="color:#F3C6B6;">Not a valid code — use the format discount20 (max ${MAX_DISCOUNT_PERCENT}%).</div>` : ''}
+    <div class="price-summary-note">Rate: ${fmtSGD(PRICING.ratePetPerSqm)}/m² (PET), +${fmtSGD(PRICING.stainlessSurchargePerSqm)}/m² for Stainless Steel. Labour fee waived once window value reaches ${fmtSGD(PRICING.labourWaiveThreshold)}.</div>`;
+}
+function updatePriceSummaryTotals(){
+  const el = document.getElementById('priceSummaryTotals');
+  if (el) el.innerHTML = renderPriceSummaryTotals();
+}
+
+function renderPricePreview(d){
+  const info = getModelInfo(d);
+  if (info.exceedsMax){
+    return `<div class="price-preview warn">Width exceeds our largest available size (max 500cm) — please double-check this measurement.</div>`;
+  }
+  if (info.price==null){
+    return `<div class="price-preview muted">Enter width &amp; height to see the price.</div>`;
+  }
+  const minNote = info.rawArea < info.minArea
+    ? ` <span class="price-min-note">(min ${info.minArea.toFixed(2)} m² applies)</span>` : '';
+  return `
+    <div class="price-preview">
+      <div class="price-preview-row">
+        <span class="price-model">Price</span>
+        <span class="price-amount">${fmtSGD(info.price)}</span>
+      </div>
+      <div class="price-preview-sub">${info.chargeableArea.toFixed(2)} m²${minNote} × ${fmtSGD(info.ratePerSqm)}/m²</div>
+    </div>`;
+}
+function updatePricePreview(){
+  const el = document.getElementById('pricePreview');
+  if (el) el.innerHTML = renderPricePreview(state.windowDraft);
+}
+
 /* ---------------- State ---------------- */
 const state = {
   step: 'job', // job | rooms | room | window | review | done
@@ -354,6 +512,7 @@ const state = {
   windowDraft: null,
   newRoomName: '',
   signerName: '',
+  promoCode: '',
   signOffDate: new Date().toISOString().slice(0,10),
   signatureData: null,
   signedAt: null,
@@ -483,6 +642,29 @@ function handlePhotoInput(fileInput){
   fileInput.value = '';
 }
 function removePhotoAt(idx){ state.windowDraft.photos.splice(idx,1); render(); }
+
+async function savePhotoToDevice(idx){
+  const photo = state.windowDraft.photos[idx];
+  if (!photo) return;
+  try {
+    const res = await fetch(photo.data);
+    const blob = await res.blob();
+    const file = new File([blob], `window-photo-${Date.now()}.jpg`, { type: blob.type || 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files:[file] })){
+      await navigator.share({ files:[file] });
+      return;
+    }
+    // Fallback for browsers without file sharing (e.g. desktop): trigger a normal download.
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = file.name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  } catch(err){
+    if (err && err.name === 'AbortError') return; // user cancelled the share sheet
+    console.warn('Save photo failed', err);
+  }
+}
 
 function saveWindow(){
   const errs = {};
@@ -695,13 +877,16 @@ function generatePDF(){
     }
 
     room.windows.forEach((w, wi) => {
-      const photos = (w.photos||[]).slice(0,4);
+      const photos = (w.photos||[]).slice(0,3);
       const notesLinesW = w.notes ? doc.splitTextToSize(w.notes, contentW-16) : [];
       const configLine = w.configuration ? (w.configuration==='Custom' ? (w.customConfiguration||'Custom configuration') : w.configuration) : '';
+      const priceInfo = getModelInfo(w);
 
-      const photoBoxSize = 20;
-      const photoRowH = (photos.length || true) ? photoBoxSize + 6 : 0;
-      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/;
+      const photoBoxSize = 48; // roughly a third of the content width
+      const photoGap = 4;
+      const extraPhotos = Math.max(0, (w.photos||[]).length - 3);
+      const photoRowH = photoBoxSize + 6 + (extraPhotos>0 ? 5 : 0);
+      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/ + 5.5 /*model/price line*/;
       if (configLine) cardH += 5.2;
       if (notesLinesW.length) cardH += notesLinesW.length*4.2 + 3;
       cardH += 8;
@@ -726,33 +911,51 @@ function generatePDF(){
           if (p.ratio){
             if (p.ratio>=1){ iw=photoBoxSize; ih=photoBoxSize/p.ratio; } else { ih=photoBoxSize; iw=photoBoxSize*p.ratio; }
           }
-          try { doc.addImage(p.data,'JPEG', px, py, iw, ih); } catch(e){}
+          const ox = px + (photoBoxSize-iw)/2, oy = py + (photoBoxSize-ih)/2;
+          try { doc.addImage(p.data,'JPEG', ox, oy, iw, ih); } catch(e){}
           doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
-          doc.rect(px, py, iw, ih);
-          px += photoBoxSize + 3;
+          doc.rect(px, py, photoBoxSize, photoBoxSize);
+          px += photoBoxSize + photoGap;
         });
-        if ((w.photos||[]).length > 4){
-          doc.setFontSize(7.5); doc.setTextColor(140,140,140);
-          doc.text(`+${w.photos.length-4} more on file`, px, py+photoBoxSize/2);
+        if (extraPhotos>0){
+          doc.setFontSize(8); doc.setTextColor(140,140,140);
+          doc.text(`+${extraPhotos} more photo${extraPhotos===1?'':'s'} on file`, marginX+8, py+photoBoxSize+5);
           doc.setTextColor(0,0,0);
         }
       } else {
         doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
         doc.rect(px, py, photoBoxSize, photoBoxSize);
-        doc.setFontSize(7.5); doc.setTextColor(150,150,150);
-        doc.text('No photo', px+3, py+photoBoxSize/2);
+        doc.setFontSize(8); doc.setTextColor(150,150,150);
+        doc.text('No photo', px+4, py+photoBoxSize/2);
         doc.setTextColor(0,0,0);
       }
 
       let ty = y + photoRowH + 4;
       doc.setFont('helvetica','bold'); doc.setFontSize(11);
       doc.text(`${w.width} \u00d7 ${w.height} cm`, marginX+8, ty);
+      if (priceInfo.price!=null){
+        doc.setFontSize(11);
+        doc.setTextColor(28,78,76);
+        doc.text(fmtSGD(priceInfo.price), marginX+contentW-8, ty, {align:'right'});
+        doc.setTextColor(0,0,0);
+      }
       ty += 6.2;
 
       let px2 = marginX+8;
       px2 = drawPill(px2, ty, w.netType, [222,235,234], [28,78,76]);
       px2 = drawPill(px2, ty, w.frameColour, [243,245,243], [30,42,42], COLOUR_RGB[w.frameColour]);
       ty += 1;
+
+      ty += 5.5;
+      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(100,112,110);
+      if (priceInfo.price!=null){
+        const minNote = priceInfo.rawArea < priceInfo.minArea ? ` (min ${priceInfo.minArea.toFixed(2)} m\u00b2 applies)` : '';
+        doc.text(`${priceInfo.chargeableArea.toFixed(2)} m\u00b2${minNote}  \u00b7  ${fmtSGD(priceInfo.ratePerSqm)}/m\u00b2`, marginX+8, ty);
+      } else if (priceInfo.exceedsMax){
+        doc.setTextColor(181,80,47);
+        doc.text('Exceeds our largest model\u2019s max width \u2014 price this window manually', marginX+8, ty);
+      }
+      doc.setTextColor(0,0,0);
 
       if (configLine){
         ty += 5.2;
@@ -772,6 +975,50 @@ function generatePDF(){
     y += 2;
   });
 
+  /* -------- Pricing summary -------- */
+  const jobPricing = computeFinalPricing();
+  const summaryRows = [
+    [`Windows (${jobPricing.windowCount})`, fmtSGD(jobPricing.subtotal)],
+    [`Labour fee${jobPricing.labourWaived ? ' (waived)' : ''}`, jobPricing.labourWaived ? 'S$0.00' : fmtSGD(jobPricing.labourFee)]
+  ];
+  if (jobPricing.discountPercent > 0){
+    summaryRows.push([`Promo code (${jobPricing.discountPercent}% off)`, `\u2212${fmtSGD(jobPricing.discountAmount)}`]);
+  }
+  const summaryNoteLines = doc.splitTextToSize(
+    `Rate: ${fmtSGD(PRICING.ratePetPerSqm)}/m\u00b2 (PET), +${fmtSGD(PRICING.stainlessSurchargePerSqm)}/m\u00b2 for Stainless Steel. Labour fee waived once window value reaches ${fmtSGD(PRICING.labourWaiveThreshold)}.` +
+    (jobPricing.unpriced>0 ? ` ${jobPricing.unpriced} window(s) exceed our largest available size and are excluded from this total \u2014 please price manually.` : ''),
+    contentW-16
+  );
+  const summaryH = 12 + summaryRows.length*7 + 10 + summaryNoteLines.length*3.6 + 6;
+  ensureSpace(summaryH+6);
+
+  doc.setFillColor(28,78,76);
+  doc.roundedRect(marginX, y, contentW, summaryH, 3, 3, 'F');
+  let sy = y + 10;
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(11.5);
+  doc.text('Pricing Summary', marginX+8, sy);
+  sy += 8;
+  doc.setFont('helvetica','normal'); doc.setFontSize(10);
+  summaryRows.forEach(([label,val])=>{
+    doc.setTextColor(220,232,231);
+    doc.text(label, marginX+8, sy);
+    doc.text(val, marginX+contentW-8, sy, {align:'right'});
+    sy += 7;
+  });
+  doc.setDrawColor(255,255,255); doc.setLineWidth(0.2);
+  doc.line(marginX+8, sy-2.5, marginX+contentW-8, sy-2.5);
+  sy += 3;
+  doc.setFont('helvetica','bold'); doc.setFontSize(14);
+  doc.setTextColor(255,255,255);
+  doc.text('Total', marginX+8, sy);
+  doc.text(fmtSGD(jobPricing.finalTotal), marginX+contentW-8, sy, {align:'right'});
+  sy += 6.5;
+  doc.setFont('helvetica','normal'); doc.setFontSize(7.5);
+  doc.setTextColor(190,208,206);
+  doc.text(summaryNoteLines, marginX+8, sy);
+  doc.setTextColor(0,0,0);
+  y += summaryH + 8;
+
   /* -------- Customer confirmation -------- */
   ensureSpace(70);
   doc.setFillColor(43,110,107);
@@ -782,7 +1029,7 @@ function generatePDF(){
   y += 8.5+7;
 
   doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(50,60,58);
-  const confirmText = `By signing below, ${state.signerName} confirms that the measurements, net type, frame colour and opening configuration listed above have been reviewed on-site and are approved for order.`;
+  const confirmText = `By signing below, ${state.signerName} confirms that the measurements, net type, frame colour, opening configuration and total price of ${fmtSGD(jobPricing.finalTotal)} listed above have been reviewed on-site and are approved for order.`;
   const confirmLines = doc.splitTextToSize(confirmText, contentW-4);
   doc.text(confirmLines, marginX+2, y);
   doc.setTextColor(0,0,0);
@@ -835,7 +1082,7 @@ function confirmReset(){
       state.step='job'; state.currentRoomId=null; state.editingWindowId=null;
       state.job={customerName:'',addressLine1:'',addressLine2:'',postalCode:'',phone:'',email:'',notes:'',date:new Date().toISOString().slice(0,10),salesperson:''};
       state.rooms=[]; state.windowDraft=null; state.newRoomName='';
-      state.signerName=''; state.signOffDate=new Date().toISOString().slice(0,10);
+      state.signerName=''; state.promoCode=''; state.signOffDate=new Date().toISOString().slice(0,10);
       state.signatureData=null; state.signedAt=null; state.errors={};
       closeModal();
     }
@@ -978,6 +1225,9 @@ function renderRoomStep(){
           <span class="tag"><span class="swatch" style="background:${COLOURS[w.frameColour]}"></span>${esc(w.frameColour)}</span>
           ${w.configuration ? `<span class="tag">${esc(w.configuration==='Custom' ? (w.customConfiguration||'Custom') : w.configuration)}</span>` : ''}
         </div>
+        ${(() => { const info = getModelInfo(w); return info.price!=null
+          ? `<div class="window-price">${fmtSGD(info.price)}</div>`
+          : (info.exceedsMax ? `<div class="window-price warn">Exceeds max width</div>` : ''); })()}
         ${w.notes ? `<div class="window-notes">${esc(w.notes)}</div>` : ''}
       </div>
       <div class="window-actions">
@@ -1007,6 +1257,7 @@ function renderWindowStep(){
             <div class="photo-thumb-item">
               <img src="${p.data}">
               <div class="photo-thumb-remove" onclick="removePhotoAt(${idx})">✕</div>
+              <div class="photo-thumb-save" onclick="savePhotoToDevice(${idx})" title="Save to Photos">⬇</div>
             </div>
           `).join('')}
         </div>
@@ -1022,15 +1273,17 @@ function renderWindowStep(){
     <div class="row2">
       <div>
         <label>Width (cm)</label>
-        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.width)}" oninput="setDraftField('width', this.value)" placeholder="0.0">
+        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.width)}" oninput="setDraftField('width', this.value); updatePricePreview();" placeholder="0.0">
         ${e.width?`<div class="field-error">${esc(e.width)}</div>`:''}
       </div>
       <div>
         <label>Height (cm)</label>
-        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.height)}" oninput="setDraftField('height', this.value)" placeholder="0.0">
+        <input type="number" inputmode="decimal" min="0" step="0.1" value="${esc(d.height)}" oninput="setDraftField('height', this.value); updatePricePreview();" placeholder="0.0">
         ${e.height?`<div class="field-error">${esc(e.height)}</div>`:''}
       </div>
     </div>
+
+    <div id="pricePreview">${renderPricePreview(d)}</div>
 
     <label>Net type</label>
     <div class="toggle-row">
@@ -1101,12 +1354,31 @@ function renderReviewStep(){
               ${w.configuration ? `<span class="tag">${esc(w.configuration==='Custom' ? (w.customConfiguration||'Custom') : w.configuration)}</span>` : ''}
               ${w.photos && w.photos.length>1 ? `<span class="tag">${w.photos.length} photos</span>` : ''}
             </div>
+            ${(() => { const info = getModelInfo(w); return info.price!=null
+              ? `<div class="window-price">${info.chargeableArea.toFixed(2)} m² · ${fmtSGD(info.price)}</div>`
+              : (info.exceedsMax ? `<div class="window-price warn">Exceeds max width — price not calculated</div>` : ''); })()}
             ${w.notes?`<div class="window-notes">${esc(w.notes)}</div>`:''}
           </div>
         </div>
       `).join('')}
     `).join('')}
   </div>
+
+  ${(() => {
+    const p = computeJobPricing();
+    return `
+    <div class="price-summary">
+      <div class="price-summary-title">Pricing Summary</div>
+      <div class="price-summary-row"><span>Windows (${p.windowCount})</span><span>${fmtSGD(p.subtotal)}</span></div>
+      <div class="price-summary-row"><span>Labour fee${p.labourWaived?' (waived)':''}</span><span>${p.labourWaived?'S$0.00':fmtSGD(p.labourFee)}</span></div>
+      ${p.unpriced>0 ? `<div class="price-summary-note">${p.unpriced} window(s) exceed our largest available size — please price these manually, they're excluded from the total above.</div>` : ''}
+
+      <label class="promo-label">Promo code (optional)</label>
+      <input type="text" id="promoCodeInput" value="${esc(state.promoCode)}" oninput="state.promoCode=this.value; updatePriceSummaryTotals();">
+
+      <div id="priceSummaryTotals">${renderPriceSummaryTotals()}</div>
+    </div>`;
+  })()}
 
   <div class="card" style="margin-top:14px;">
     <div class="section-title">Customer sign-off</div>
