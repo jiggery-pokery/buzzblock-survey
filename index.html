@@ -395,9 +395,9 @@ const PRICING = {
 };
 // Model max width (cm) and minimum chargeable area (m²), from the supplier price list.
 const MODEL_TIERS = [
-  { maxWidthCm: 120, minAreaSqm: 1.0, petName: '835加锁款', steelName: '835防猫款' },
-  { maxWidthCm: 200, minAreaSqm: 1.2, petName: '856纱窗款', steelName: '856纱窗款' },
-  { maxWidthCm: 500, minAreaSqm: 3.0, petName: '876阳台款', steelName: '876阳台款' }
+  { maxWidthCm: 75, minAreaSqm: 1.0, code: '835' },
+  { maxWidthCm: 200, minAreaSqm: 1.2, code: '856' },
+  { maxWidthCm: 500, minAreaSqm: 3.0, code: '876' }
 ];
 
 function fmtSGD(n){
@@ -405,7 +405,7 @@ function fmtSGD(n){
   return 'S$' + n.toLocaleString('en-SG', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 
-// Derives the product model, chargeable area and price for one window.
+// Derives the product model code, chargeable area and price for one window.
 // Returns null fields (price:null) if width/height aren't filled in yet, or width exceeds every model's max.
 function getModelInfo(w){
   const width = parseFloat(w.width), height = parseFloat(w.height);
@@ -417,7 +417,7 @@ function getModelInfo(w){
   if (!tier){
     return { model:null, rawArea:(width/100)*(height/100), chargeableArea:null, minArea:null, ratePerSqm, price:null, exceedsMax:true };
   }
-  const model = w.netType==='Stainless Steel' ? tier.steelName : tier.petName;
+  const model = tier.code;
   const rawArea = (width/100)*(height/100);
   const chargeableArea = Math.max(rawArea, tier.minAreaSqm);
   const price = chargeableArea * ratePerSqm;
@@ -739,18 +739,18 @@ function finalizeSign(){
   const canvas = document.getElementById('sigPad');
   state.signatureData = canvas.toDataURL('image/png');
   state.signedAt = state.signOffDate;
-  generatePDF();
+  generateAllPDFs();
   goStep('done');
 }
 
 /* ---------------- PDF generation ---------------- */
 function sanitizeFilename(s){ return String(s||'customer').trim().replace(/[^a-z0-9]+/gi,'_').slice(0,40); }
 
-function generatePDF(){
+function generatePDF(internal){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'mm', format:'a4' });
   const marginX = 16, pageW = 210, pageH = 297, contentW = pageW - marginX*2, pageBottom = 273;
-  let y = 40;
+  let y = internal ? 46 : 40;
 
   function ensureSpace(h){
     if (y + h > pageBottom){ addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40; }
@@ -771,6 +771,12 @@ function generatePDF(){
       doc.setFontSize(8.5);
       doc.text(`Survey date: ${fmtDate(state.job.date)}`, pageW-marginX, 15, {align:'right'});
       if (state.job.salesperson) doc.text(`Sales rep: ${state.job.salesperson}`, pageW-marginX, 20, {align:'right'});
+      if (internal){
+        doc.setFillColor(181,80,47);
+        doc.rect(0, 34, pageW, 6, 'F');
+        doc.setFont('helvetica','bold'); doc.setFontSize(8.5); doc.setTextColor(255,255,255);
+        doc.text('INTERNAL COPY \u2014 FOR ORDERING & RECORDS ONLY \u2014 NOT FOR CUSTOMER', pageW/2, 38.2, {align:'center'});
+      }
     } else {
       doc.setFont('helvetica','bold'); doc.setFontSize(11);
       doc.text('BuzzBlock — Site Survey (cont.)', marginX, 10.5);
@@ -886,7 +892,7 @@ function generatePDF(){
       const photoGap = 4;
       const extraPhotos = Math.max(0, (w.photos||[]).length - 3);
       const photoRowH = photoBoxSize + 6 + (extraPhotos>0 ? 5 : 0);
-      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/ + 5.5 /*model/price line*/;
+      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/ + 5.5 /*area/rate line*/;
       if (configLine) cardH += 5.2;
       if (notesLinesW.length) cardH += notesLinesW.length*4.2 + 3;
       cardH += 8;
@@ -950,7 +956,8 @@ function generatePDF(){
       doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(100,112,110);
       if (priceInfo.price!=null){
         const minNote = priceInfo.rawArea < priceInfo.minArea ? ` (min ${priceInfo.minArea.toFixed(2)} m\u00b2 applies)` : '';
-        doc.text(`${priceInfo.chargeableArea.toFixed(2)} m\u00b2${minNote}  \u00b7  ${fmtSGD(priceInfo.ratePerSqm)}/m\u00b2`, marginX+8, ty);
+        const modelPrefix = internal && priceInfo.model ? `Model ${priceInfo.model}  \u00b7  ` : '';
+        doc.text(`${modelPrefix}${priceInfo.chargeableArea.toFixed(2)} m\u00b2${minNote}  \u00b7  ${fmtSGD(priceInfo.ratePerSqm)}/m\u00b2`, marginX+8, ty);
       } else if (priceInfo.exceedsMax){
         doc.setTextColor(181,80,47);
         doc.text('Exceeds our largest model\u2019s max width \u2014 price this window manually', marginX+8, ty);
@@ -982,7 +989,7 @@ function generatePDF(){
     [`Labour fee${jobPricing.labourWaived ? ' (waived)' : ''}`, jobPricing.labourWaived ? 'S$0.00' : fmtSGD(jobPricing.labourFee)]
   ];
   if (jobPricing.discountPercent > 0){
-    summaryRows.push([`Promo code (${jobPricing.discountPercent}% off)`, `\u2212${fmtSGD(jobPricing.discountAmount)}`]);
+    summaryRows.push([`Promo code (${jobPricing.discountPercent}% off)`, `-${fmtSGD(jobPricing.discountAmount)}`]);
   }
   const summaryNoteLines = doc.splitTextToSize(
     `Rate: ${fmtSGD(PRICING.ratePetPerSqm)}/m\u00b2 (PET), +${fmtSGD(PRICING.stainlessSurchargePerSqm)}/m\u00b2 for Stainless Steel. Labour fee waived once window value reaches ${fmtSGD(PRICING.labourWaiveThreshold)}.` +
@@ -1061,14 +1068,21 @@ function generatePDF(){
     doc.setDrawColor(225,228,226); doc.setLineWidth(0.25);
     doc.line(marginX, pageH-14, pageW-marginX, pageH-14);
     doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(140,140,140);
-    doc.text('Generated by BuzzBlock Site Survey App', marginX, pageH-9);
+    doc.text(internal ? 'BuzzBlock Site Survey App \u2014 Internal Copy' : 'Generated by BuzzBlock Site Survey App', marginX, pageH-9);
     doc.text(`Page ${p} of ${pageCount}`, pageW-marginX, pageH-9, {align:'right'});
     doc.setTextColor(0,0,0);
   }
 
-  const filename = `BuzzBlock_Survey_${sanitizeFilename(state.job.customerName)}_${state.job.date}.pdf`;
-  state.lastPdfFilename = filename;
+  const filename = `${internal?'STAFF':'CUSTOMER'}_BuzzBlock_Survey_${sanitizeFilename(state.job.customerName)}_${state.job.date}.pdf`;
   doc.save(filename);
+  return filename;
+}
+
+function generateAllPDFs(){
+  const customerFile = generatePDF(false);
+  const internalFile = generatePDF(true);
+  state.lastPdfFilename = customerFile;
+  state.lastPdfFilenameInternal = internalFile;
 }
 
 /* ---------------- Reset ---------------- */
@@ -1414,9 +1428,12 @@ function renderDoneStep(){
   <div class="card" style="text-align:center;">
     <div class="done-check">✓</div>
     <div class="section-title">Signed &amp; saved</div>
-    <div class="success-banner">${esc(state.lastPdfFilename || 'Survey.pdf')} was downloaded to this device.</div>
-    <p class="section-sub" style="margin-top:0;">Share it with the customer from your downloads, or generate it again below.</p>
-    <button class="btn btn-outline btn-block" onclick="generatePDF()">Download PDF again</button>
+    <div class="success-banner">Two PDFs were downloaded to this device:<br>
+      <strong>${esc(state.lastPdfFilename || 'CUSTOMER_Survey.pdf')}</strong> (send to the customer)<br>
+      <strong>${esc(state.lastPdfFilenameInternal || 'STAFF_Survey.pdf')}</strong> (keep for your records &amp; ordering)
+    </div>
+    <p class="section-sub" style="margin-top:0;">The internal copy includes the product model codes; the customer copy doesn't. Generate both again below if needed.</p>
+    <button class="btn btn-outline btn-block" onclick="generateAllPDFs()">Download both PDFs again</button>
   </div>
   <div class="bottom-bar">
     <button class="btn btn-ghost" onclick="goStep('review')">View form</button>
