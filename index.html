@@ -867,6 +867,11 @@ function generatePDF(internal){
   doc.setTextColor(0,0,0);
   y += boxH + 8;
 
+  // Rooms & windows always start on a fresh page, after the customer details block.
+  if (state.rooms.length){
+    addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40;
+  }
+
   /* -------- Rooms -------- */
   state.rooms.forEach((room, ri) => {
     ensureSpace(18);
@@ -1040,12 +1045,12 @@ function generatePDF(internal){
   if (jobPricing.discountPercent > 0){
     summaryRows.push([`Promo code (${jobPricing.discountPercent}% off)`, `-${fmtSGD(jobPricing.discountAmount)}`]);
   }
-  const summaryNoteLines = doc.splitTextToSize(
-    `Rate: ${fmtSGD(PRICING.ratePetPerSqm)}/m\u00b2 (PET), +${fmtSGD(PRICING.stainlessSurchargePerSqm)}/m\u00b2 for Stainless Steel. Labour fee waived once window value reaches ${fmtSGD(PRICING.labourWaiveThreshold)}.` +
-    (jobPricing.unpriced>0 ? ` ${jobPricing.unpriced} window(s) exceed our largest available size and are excluded from this total \u2014 please price manually.` : ''),
-    contentW-16
-  );
-  const summaryH = 12 + summaryRows.length*7 + 10 + summaryNoteLines.length*3.6 + 6;
+  // The rate / labour-fee explanation is for the staff copy only; the customer copy just shows the figures.
+  const summaryNoteText =
+    (internal ? `Rate: ${fmtSGD(PRICING.ratePetPerSqm)}/m\u00b2 (PET), +${fmtSGD(PRICING.stainlessSurchargePerSqm)}/m\u00b2 for Stainless Steel. Labour fee waived once window value reaches ${fmtSGD(PRICING.labourWaiveThreshold)}.` : '') +
+    (jobPricing.unpriced>0 ? ` ${jobPricing.unpriced} window(s) exceed our largest available size and are excluded from this total \u2014 please price manually.` : '');
+  const summaryNoteLines = summaryNoteText.trim() ? doc.splitTextToSize(summaryNoteText.trim(), contentW-16) : [];
+  const summaryH = 12 + summaryRows.length*7 + 10 + (summaryNoteLines.length ? summaryNoteLines.length*3.6 + 6 : 4);
   ensureSpace(summaryH+6);
 
   doc.setFillColor(28,78,76);
