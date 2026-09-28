@@ -520,6 +520,7 @@ const state = {
   modal: null // {title, text, confirmLabel, danger, onConfirm}
 };
 let idSeq = 1;
+let cacheVersionLabel = ''; // filled in from the service worker's cache name, e.g. "v1.4"
 const newId = () => 'id' + (idSeq++);
 
 function esc(s){
@@ -618,14 +619,16 @@ function compressImageFile(file, cb){
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const maxW = 900;
+      // Higher width/quality = sharper photos in the PDF (better for extracting later),
+      // at the cost of a larger PDF file and slightly slower generation with many photos.
+      const maxW = 1600;
       const scale = Math.min(1, maxW/img.width);
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(img.width*scale);
       canvas.height = Math.round(img.height*scale);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      cb({ data: canvas.toDataURL('image/jpeg',0.72), ratio: canvas.width/canvas.height });
+      cb({ data: canvas.toDataURL('image/jpeg',0.85), ratio: canvas.width/canvas.height });
     };
     img.src = e.target.result;
   };
@@ -1121,7 +1124,7 @@ function renderHeader(){
   return `
   <div class="header">
     <div class="header-top">
-      <div class="brand">BuzzBlock Site Survey<small>Field measurement &amp; sign-off</small></div>
+      <div class="brand">BuzzBlock Site Survey<small>Field measurement &amp; sign-off <span id="cacheVersionTag">${cacheVersionLabel ? '· '+esc(cacheVersionLabel) : ''}</span></small></div>
       ${showReset ? `<button class="reset-btn" onclick="confirmReset()">New survey</button>` : ''}
     </div>
     ${renderSteps()}
@@ -1483,11 +1486,29 @@ function render(){
 
 render();
 
+// Reads the running cache name directly from Cache Storage — not hardcoded — so it always
+// matches whatever CACHE_NAME the active sw.js actually used, e.g. "buzzblock-survey-v1.4" -> "v1.4".
+async function detectCacheVersion(){
+  try {
+    if (!('caches' in window)) return;
+    const keys = await caches.keys();
+    const match = keys.find(k => k.indexOf('buzzblock-survey-') === 0);
+    if (match){
+      cacheVersionLabel = match.slice('buzzblock-survey-'.length);
+      const el = document.getElementById('cacheVersionTag');
+      if (el) el.textContent = cacheVersionLabel ? `· ${cacheVersionLabel}` : '';
+    }
+  } catch(e){ /* ignore */ }
+}
+detectCacheVersion();
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(err => {
       console.warn('Service worker registration failed:', err);
     });
+    // Re-check shortly after registration in case this is the very first install.
+    setTimeout(detectCacheVersion, 2000);
   });
 }
 </script>
