@@ -364,6 +364,7 @@
     width:64px;height:64px;border-radius:50%;background:var(--teal-tint);color:var(--teal-dark);
     display:flex;align-items:center;justify-content:center;margin:10px auto 16px;font-size:30px;
   }
+  .pdf-file-name{font-size:11px;color:var(--ink-soft);margin-top:6px;word-break:break-all;}
   .success-banner{background:var(--teal-tint);color:var(--teal-dark);border-radius:9px;padding:10px 12px;font-size:13px;margin-bottom:14px;}
 
   @media (min-width:521px){
@@ -520,6 +521,7 @@ const state = {
   windowDraft: null,
   newRoomName: '',
   signerName: '',
+  pdfs: null,
   promoCode: '',
   signOffDate: new Date().toISOString().slice(0,10),
   signatureData: null,
@@ -1131,15 +1133,30 @@ function generatePDF(internal){
   }
 
   const filename = `${internal?'STAFF':'CUSTOMER'}_BuzzBlock_Survey_${sanitizeFilename(state.job.customerName)}_${state.job.date}.pdf`;
-  doc.save(filename);
-  return filename;
+  doc.setProperties({ title: filename });   // shows as the tab title when the PDF is opened
+  return { filename, blob: doc.output('blob') };
 }
 
+// Builds both PDFs in memory (no automatic download). The Done screen buttons open them in a new tab.
 function generateAllPDFs(){
-  const customerFile = generatePDF(false);
-  const internalFile = generatePDF(true);
-  state.lastPdfFilename = customerFile;
-  state.lastPdfFilenameInternal = internalFile;
+  ['customer','staff'].forEach(k => { if (state.pdfs && state.pdfs[k]) URL.revokeObjectURL(state.pdfs[k].url); });
+  const c = generatePDF(false);
+  const st = generatePDF(true);
+  state.pdfs = {
+    customer: { filename: c.filename,  url: URL.createObjectURL(c.blob) },
+    staff:    { filename: st.filename, url: URL.createObjectURL(st.blob) }
+  };
+}
+// Must be called straight from a tap so the browser allows the new tab.
+function openPdf(which){
+  const f = state.pdfs && state.pdfs[which];
+  if (!f) return;
+  const w = window.open(f.url, '_blank');
+  if (!w){
+    const a = document.createElement('a');
+    a.href = f.url; a.target = '_blank'; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }
 }
 
 /* ---------------- Reset ---------------- */
@@ -1155,6 +1172,7 @@ function confirmReset(){
       state.rooms=[]; state.windowDraft=null; state.newRoomName='';
       state.signerName=''; state.promoCode=''; state.signOffDate=new Date().toISOString().slice(0,10);
       state.signatureData=null; state.signedAt=null; state.errors={};
+      if (state.pdfs){ ['customer','staff'].forEach(k=>{ if (state.pdfs[k]) URL.revokeObjectURL(state.pdfs[k].url); }); state.pdfs=null; }
       closeModal();
     }
   });
@@ -1485,16 +1503,16 @@ function renderReviewStep(){
 }
 
 function renderDoneStep(){
+  const pdfs = state.pdfs || {};
   return `
   <div class="card" style="text-align:center;">
     <div class="done-check">✓</div>
     <div class="section-title">Signed &amp; saved</div>
-    <div class="success-banner">Two PDFs were downloaded to this device:<br>
-      <strong>${esc(state.lastPdfFilename || 'CUSTOMER_Survey.pdf')}</strong> (send to the customer)<br>
-      <strong>${esc(state.lastPdfFilenameInternal || 'STAFF_Survey.pdf')}</strong> (keep for your records &amp; ordering)
-    </div>
-    <p class="section-sub" style="margin-top:0;">The internal copy includes the product model codes; the customer copy doesn't. Generate both again below if needed.</p>
-    <button class="btn btn-outline btn-block" onclick="generateAllPDFs()">Download both PDFs again</button>
+    <p class="section-sub" style="margin-top:4px;">Tap a button to open the PDF in a new tab. From there you can share or save it.</p>
+    <button class="btn btn-primary btn-block" onclick="openPdf('customer')">Open customer copy</button>
+    <div class="pdf-file-name">${esc((pdfs.customer && pdfs.customer.filename) || '')}</div>
+    <button class="btn btn-outline btn-block" style="margin-top:14px;" onclick="openPdf('staff')">Open staff copy</button>
+    <div class="pdf-file-name">${esc((pdfs.staff && pdfs.staff.filename) || '')} &mdash; internal, not for the customer</div>
   </div>
   <div class="bottom-bar">
     <button class="btn btn-ghost" onclick="goStep('review')">View form</button>
