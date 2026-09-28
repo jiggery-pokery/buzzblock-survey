@@ -254,6 +254,9 @@
     background:var(--surface-2);
   }
   .photo-thumb-row{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px;}
+  .photo-list{display:flex;flex-direction:column;gap:14px;margin-bottom:14px;text-align:left;}
+  .photo-row{display:flex;gap:12px;align-items:stretch;}
+  .photo-row textarea{flex:1;min-height:76px;font-size:13px;padding:9px 10px;margin:0;}
   .photo-thumb-item{position:relative;flex-shrink:0;}
   .photo-thumb-item img{width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block;}
   .photo-thumb-remove{
@@ -388,16 +391,18 @@ const CONFIG_OPTIONS = [
 /* ---------------- Pricing ----------------
    Edit these constants if the supplier's rates or your labour policy change. */
 const PRICING = {
-  ratePetPerSqm: 265,          // S$ per m² — PET mesh (default)
+  ratePetPerSqm: 256,          // S$ per m² — PET mesh (default)
   stainlessSurchargePerSqm: 30, // S$ per m² added on top, for Stainless Steel mesh
+  minAreaSqm: 1.2,              // flat minimum chargeable area (m²) for every window, regardless of model
   labourFee: 300,               // S$ flat labour/trip fee for small jobs
   labourWaiveThreshold: 300     // labour fee is waived once the window subtotal reaches this (S$)
 };
-// Model max width (cm) and minimum chargeable area (m²), from the supplier price list.
+// Model code by max width (cm). The supplier's per-model minimum areas are intentionally NOT
+// applied to customers — everyone gets the same flat PRICING.minAreaSqm above.
 const MODEL_TIERS = [
-  { maxWidthCm: 75, minAreaSqm: 1.0, code: '835' },
-  { maxWidthCm: 200, minAreaSqm: 1.2, code: '856' },
-  { maxWidthCm: 500, minAreaSqm: 3.0, code: '876' }
+  { maxWidthCm: 75, code: '835' },
+  { maxWidthCm: 200, code: '856' },
+  { maxWidthCm: 500, code: '876' }
 ];
 
 function fmtSGD(n){
@@ -412,16 +417,19 @@ function getModelInfo(w){
   if (!width || !height || width<=0 || height<=0){
     return { model:null, rawArea:null, chargeableArea:null, minArea:null, ratePerSqm:null, price:null, exceedsMax:false };
   }
-  const tier = MODEL_TIERS.find(t => width <= t.maxWidthCm);
+  // Centre opening = 2 pieces, each half the measured width, so the series is picked from the half-width.
+  const isCentre = typeof w.configuration === 'string' && w.configuration.indexOf('Centre opening') === 0;
+  const pieceWidth = isCentre ? width/2 : width;
+  const tier = MODEL_TIERS.find(t => pieceWidth <= t.maxWidthCm);
   const ratePerSqm = PRICING.ratePetPerSqm + (w.netType==='Stainless Steel' ? PRICING.stainlessSurchargePerSqm : 0);
   if (!tier){
     return { model:null, rawArea:(width/100)*(height/100), chargeableArea:null, minArea:null, ratePerSqm, price:null, exceedsMax:true };
   }
   const model = tier.code;
   const rawArea = (width/100)*(height/100);
-  const chargeableArea = Math.max(rawArea, tier.minAreaSqm);
+  const chargeableArea = Math.max(rawArea, PRICING.minAreaSqm);
   const price = chargeableArea * ratePerSqm;
-  return { model, rawArea, chargeableArea, minArea:tier.minAreaSqm, ratePerSqm, price, exceedsMax:false };
+  return { model, rawArea, chargeableArea, minArea:PRICING.minAreaSqm, ratePerSqm, price, exceedsMax:false };
 }
 
 // Sums pricing across every window in every room, and applies the labour fee rule.
@@ -477,7 +485,7 @@ function updatePriceSummaryTotals(){
 function renderPricePreview(d){
   const info = getModelInfo(d);
   if (info.exceedsMax){
-    return `<div class="price-preview warn">Width exceeds our largest available size (max 500cm) — please double-check this measurement.</div>`;
+    return `<div class="price-preview warn">Width exceeds our largest available size (max 500cm per piece) — please double-check this measurement.</div>`;
   }
   if (info.price==null){
     return `<div class="price-preview muted">Enter width &amp; height to see the price.</div>`;
@@ -638,12 +646,14 @@ function handlePhotoInput(fileInput){
   const files = Array.from(fileInput.files || []);
   files.forEach(file => {
     compressImageFile(file, photoObj => {
+      photoObj.note = '';
       state.windowDraft.photos.push(photoObj);
       render();
     });
   });
   fileInput.value = '';
 }
+function setPhotoNote(idx, value){ if (state.windowDraft.photos[idx]) state.windowDraft.photos[idx].note = value; }
 function removePhotoAt(idx){ state.windowDraft.photos.splice(idx,1); render(); }
 
 async function savePhotoToDevice(idx){
@@ -886,101 +896,137 @@ function generatePDF(internal){
     }
 
     room.windows.forEach((w, wi) => {
-      const photos = (w.photos||[]).slice(0,3);
-      const notesLinesW = w.notes ? doc.splitTextToSize(w.notes, contentW-16) : [];
+      const photos = w.photos || [];
       const configLine = w.configuration ? (w.configuration==='Custom' ? (w.customConfiguration||'Custom configuration') : w.configuration) : '';
       const priceInfo = getModelInfo(w);
+      const x0 = marginX + 18;            // left column for text, photos & captions (number badge sits in the gutter)
+      const textW = contentW - 18 - 8;    // usable width of that column
+      doc.setFont('helvetica','italic'); doc.setFontSize(9);
+      const notesLinesW = w.notes ? doc.splitTextToSize(w.notes, textW) : [];
 
-      const photoBoxSize = 48; // roughly a third of the content width
-      const photoGap = 4;
-      const extraPhotos = Math.max(0, (w.photos||[]).length - 3);
-      const photoRowH = photoBoxSize + 6 + (extraPhotos>0 ? 5 : 0);
-      let cardH = photoRowH + 8 /*size line*/ + 8 /*pills row*/ + 5.5 /*area/rate line*/;
-      if (configLine) cardH += 5.2;
-      if (notesLinesW.length) cardH += notesLinesW.length*4.2 + 3;
-      cardH += 8;
+      /* Each window is built from "segments" (info block, then one segment per photo) so that
+         large photos can flow across pages without a card being cut off. */
+      let infoH = 11.5 + 6.2 + 6.5;
+      if (configLine) infoH += 5.2;
+      if (notesLinesW.length) infoH += (configLine?4.6:5.5) + (notesLinesW.length-1)*4.0;
+      infoH += 5;
 
-      ensureSpace(cardH+4);
+      const drawInfo = (yy) => {
+        doc.setFillColor(43,110,107);
+        doc.circle(marginX+10, yy+10, 4.3, 'F');
+        doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
+        doc.text(String(wi+1), marginX+10, yy+11.5, {align:'center'});
+        doc.setTextColor(0,0,0);
 
-      doc.setFillColor(250,250,249);
-      doc.setDrawColor(219,224,222); doc.setLineWidth(0.3);
-      doc.roundedRect(marginX, y, contentW, cardH, 3, 3, 'FD');
-
-      doc.setFillColor(43,110,107);
-      doc.circle(marginX+10, y+10, 4.3, 'F');
-      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(9.5);
-      doc.text(String(wi+1), marginX+10, y+11.5, {align:'center'});
-      doc.setTextColor(0,0,0);
-
-      let px = marginX+18;
-      const py = y+6;
-      if (photos.length){
-        photos.forEach(p => {
-          let iw = photoBoxSize, ih = photoBoxSize;
-          if (p.ratio){
-            if (p.ratio>=1){ iw=photoBoxSize; ih=photoBoxSize/p.ratio; } else { ih=photoBoxSize; iw=photoBoxSize*p.ratio; }
-          }
-          const ox = px + (photoBoxSize-iw)/2, oy = py + (photoBoxSize-ih)/2;
-          try { doc.addImage(p.data,'JPEG', ox, oy, iw, ih); } catch(e){}
-          doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
-          doc.rect(px, py, photoBoxSize, photoBoxSize);
-          px += photoBoxSize + photoGap;
-        });
-        if (extraPhotos>0){
-          doc.setFontSize(8); doc.setTextColor(140,140,140);
-          doc.text(`+${extraPhotos} more photo${extraPhotos===1?'':'s'} on file`, marginX+8, py+photoBoxSize+5);
+        let ty = yy + 11.5;
+        doc.setFont('helvetica','bold'); doc.setFontSize(11);
+        doc.text(`${w.width} \u00d7 ${w.height} cm`, x0, ty);
+        if (priceInfo.price!=null){
+          doc.setTextColor(28,78,76);
+          doc.text(fmtSGD(priceInfo.price), marginX+contentW-8, ty, {align:'right'});
           doc.setTextColor(0,0,0);
         }
-      } else {
-        doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
-        doc.rect(px, py, photoBoxSize, photoBoxSize);
-        doc.setFontSize(8); doc.setTextColor(150,150,150);
-        doc.text('No photo', px+4, py+photoBoxSize/2);
+        ty += 6.2;
+
+        let px2 = x0;
+        px2 = drawPill(px2, ty, w.netType, [222,235,234], [28,78,76]);
+        px2 = drawPill(px2, ty, w.frameColour, [243,245,243], [30,42,42], COLOUR_RGB[w.frameColour]);
+        ty += 6.5;
+
+        doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(100,112,110);
+        if (priceInfo.price!=null){
+          const minNote = priceInfo.rawArea < priceInfo.minArea ? ` (min ${priceInfo.minArea.toFixed(2)} m\u00b2 applies)` : '';
+          const modelPrefix = internal && priceInfo.model ? `Series ${priceInfo.model}  \u00b7  ` : '';
+          doc.text(`${modelPrefix}${priceInfo.chargeableArea.toFixed(2)} m\u00b2${minNote}  \u00b7  ${fmtSGD(priceInfo.ratePerSqm)}/m\u00b2`, x0, ty);
+        } else if (priceInfo.exceedsMax){
+          doc.setTextColor(181,80,47);
+          doc.text('Exceeds our largest model\u2019s max width \u2014 price this window manually', x0, ty);
+        }
         doc.setTextColor(0,0,0);
+
+        if (configLine){
+          ty += 5.2;
+          doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(90,100,98);
+          doc.text(`Opening: ${configLine}`, x0, ty);
+          doc.setTextColor(0,0,0);
+        }
+        if (notesLinesW.length){
+          ty += (configLine?4.6:5.5);
+          doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,100,98);
+          doc.text(notesLinesW, x0, ty);
+          doc.setTextColor(0,0,0);
+        }
+      };
+
+      // Landscape photos span the full width (1 per row); portrait photos go 2 per row.
+      const colGap = 4;
+      const halfW = (textW - colGap) / 2;
+      const maxPhotoH = 150;
+      doc.setFont('helvetica','italic'); doc.setFontSize(8.5);
+      const items = photos.map(p => {
+        const ratio = p.ratio || 1;
+        const landscape = ratio > 1;
+        let iw = landscape ? textW : halfW;
+        let ih = iw / ratio;
+        if (ih > maxPhotoH){ ih = maxPhotoH; iw = ih * ratio; }
+        const cap = p.note ? doc.splitTextToSize(p.note, iw) : [];
+        const capH = cap.length ? 4 + (cap.length-1)*3.6 + 2.5 : 0;
+        return { p, landscape, iw, ih, cap, bh: ih + capH };
+      });
+      const photoSegs = [];
+      for (let i = 0; i < items.length; ){
+        const row = [items[i]];
+        if (!items[i].landscape && items[i+1] && !items[i+1].landscape) row.push(items[i+1]);
+        i += row.length;
+        const rowH = 2 + Math.max.apply(null, row.map(it => it.bh)) + 3;
+        photoSegs.push({
+          h: rowH,
+          draw: (yy) => {
+            row.forEach((it, k) => {
+              const px = x0 + k*(halfW + colGap);
+              try { doc.addImage(it.p.data, 'JPEG', px, yy+2, it.iw, it.ih); } catch(e){}
+              doc.setDrawColor(219,224,222); doc.setLineWidth(0.2);
+              doc.rect(px, yy+2, it.iw, it.ih);
+              if (it.cap.length){
+                doc.setFont('helvetica','italic'); doc.setFontSize(8.5); doc.setTextColor(90,100,98);
+                doc.text(it.cap, px, yy+2+it.ih+4);
+                doc.setTextColor(0,0,0);
+              }
+            });
+          }
+        });
       }
 
-      let ty = y + photoRowH + 4;
-      doc.setFont('helvetica','bold'); doc.setFontSize(11);
-      doc.text(`${w.width} \u00d7 ${w.height} cm`, marginX+8, ty);
-      if (priceInfo.price!=null){
-        doc.setFontSize(11);
-        doc.setTextColor(28,78,76);
-        doc.text(fmtSGD(priceInfo.price), marginX+contentW-8, ty, {align:'right'});
-        doc.setTextColor(0,0,0);
-      }
-      ty += 6.2;
+      const segs = [{ h: infoH, draw: drawInfo }].concat(photoSegs);
+      let idx = 0, first = true;
+      while (idx < segs.length){
+        const headH = first ? 0 : 9;               // "Window N (cont.)" label on continuation cards
+        const avail = pageBottom - y - 4;
+        let used = headH, end = idx;
+        while (end < segs.length && used + segs[end].h <= avail){ used += segs[end].h; end++; }
+        // Keep the info block together with its first photo where possible.
+        const infoOnlyFits = first && end === 1 && segs.length > 1;
+        if ((end === idx || infoOnlyFits) && y > 41){
+          addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40;
+          continue;
+        }
+        if (end === idx){ end = idx + 1; used = headH + segs[idx].h; }   // safeguard: never loop forever
 
-      let px2 = marginX+8;
-      px2 = drawPill(px2, ty, w.netType, [222,235,234], [28,78,76]);
-      px2 = drawPill(px2, ty, w.frameColour, [243,245,243], [30,42,42], COLOUR_RGB[w.frameColour]);
-      ty += 1;
+        doc.setFillColor(250,250,249);
+        doc.setDrawColor(219,224,222); doc.setLineWidth(0.3);
+        doc.roundedRect(marginX, y, contentW, used, 3, 3, 'FD');
 
-      ty += 5.5;
-      doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(100,112,110);
-      if (priceInfo.price!=null){
-        const minNote = priceInfo.rawArea < priceInfo.minArea ? ` (min ${priceInfo.minArea.toFixed(2)} m\u00b2 applies)` : '';
-        const modelPrefix = internal && priceInfo.model ? `Model ${priceInfo.model}  \u00b7  ` : '';
-        doc.text(`${modelPrefix}${priceInfo.chargeableArea.toFixed(2)} m\u00b2${minNote}  \u00b7  ${fmtSGD(priceInfo.ratePerSqm)}/m\u00b2`, marginX+8, ty);
-      } else if (priceInfo.exceedsMax){
-        doc.setTextColor(181,80,47);
-        doc.text('Exceeds our largest model\u2019s max width \u2014 price this window manually', marginX+8, ty);
+        let yy = y;
+        if (!first){
+          doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(28,78,76);
+          doc.text(`Window ${wi+1} (cont.)`, x0, yy+6);
+          doc.setTextColor(0,0,0);
+          yy += headH;
+        }
+        for (let s = idx; s < end; s++){ segs[s].draw(yy); yy += segs[s].h; }
+        y += used + 5;
+        idx = end; first = false;
       }
-      doc.setTextColor(0,0,0);
-
-      if (configLine){
-        ty += 5.2;
-        doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(90,100,98);
-        doc.text(`Opening: ${configLine}`, marginX+8, ty);
-        doc.setTextColor(0,0,0);
-      }
-      if (notesLinesW.length){
-        ty += (configLine?4.6:5.5);
-        doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,100,98);
-        doc.text(notesLinesW, marginX+8, ty);
-        doc.setTextColor(0,0,0);
-      }
-
-      y += cardH + 5;
     });
     y += 2;
   });
@@ -1269,12 +1315,15 @@ function renderWindowStep(){
     <label>Photos</label>
     <div class="photo-box">
       ${d.photos.length ? `
-        <div class="photo-thumb-row">
+        <div class="photo-list">
           ${d.photos.map((p,idx)=>`
-            <div class="photo-thumb-item">
-              <img src="${p.data}">
-              <div class="photo-thumb-remove" onclick="removePhotoAt(${idx})">✕</div>
-              <div class="photo-thumb-save" onclick="savePhotoToDevice(${idx})" title="Save to Photos">⬇</div>
+            <div class="photo-row">
+              <div class="photo-thumb-item">
+                <img src="${p.data}">
+                <div class="photo-thumb-remove" onclick="removePhotoAt(${idx})">✕</div>
+                <div class="photo-thumb-save" onclick="savePhotoToDevice(${idx})" title="Save to Photos">⬇</div>
+              </div>
+              <textarea placeholder="Note for photo ${idx+1} (optional)" oninput="setPhotoNote(${idx}, this.value)">${esc(p.note||'')}</textarea>
             </div>
           `).join('')}
         </div>
@@ -1375,6 +1424,7 @@ function renderReviewStep(){
               ? `<div class="window-price">${info.chargeableArea.toFixed(2)} m² · ${fmtSGD(info.price)}</div>`
               : (info.exceedsMax ? `<div class="window-price warn">Exceeds max width — price not calculated</div>` : ''); })()}
             ${w.notes?`<div class="window-notes">${esc(w.notes)}</div>`:''}
+            ${(w.photos||[]).map((p,pi)=> p.note ? `<div class="window-notes">Photo ${pi+1}: ${esc(p.note)}</div>` : '').join('')}
           </div>
         </div>
       `).join('')}
