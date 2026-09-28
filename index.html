@@ -874,6 +874,8 @@ function generatePDF(internal){
 
   /* -------- Rooms -------- */
   state.rooms.forEach((room, ri) => {
+    // Every room after the first starts on a fresh page (the first one already did, above).
+    if (ri > 0){ addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40; }
     ensureSpace(18);
     doc.setFillColor(43,110,107);
     doc.roundedRect(marginX, y, contentW, 8.5, 2, 2, 'F');
@@ -1036,7 +1038,8 @@ function generatePDF(internal){
     y += 2;
   });
 
-  /* -------- Pricing summary -------- */
+  /* -------- Pricing summary (always on its own fresh page) -------- */
+  addFooterPlaceholder(); doc.addPage(); drawHeaderBand(false); y = 40;
   const jobPricing = computeFinalPricing();
   const summaryRows = [
     [`Windows (${jobPricing.windowCount})`, fmtSGD(jobPricing.subtotal)],

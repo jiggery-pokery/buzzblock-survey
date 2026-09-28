@@ -6,7 +6,7 @@
  * IMPORTANT: bump CACHE_NAME any time you redeploy changed files, so
  * returning devices pick up the update instead of serving the old cache.
  */
-const CACHE_NAME = 'buzzblock-survey-v1.9';
+const CACHE_NAME = 'buzzblock-survey-v1.10';
 
 const PRECACHE_URLS = [
   './',
